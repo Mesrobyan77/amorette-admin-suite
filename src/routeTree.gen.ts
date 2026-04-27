@@ -9,38 +9,164 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminProfileRouteImport } from './routes/admin.profile'
+import { Route as AdminComingSoonRouteImport } from './routes/admin.coming-soon'
+import { Route as AdminTemplatesIndexRouteImport } from './routes/admin.templates.index'
+import { Route as AdminTemplatesCreateRouteImport } from './routes/admin.templates.create'
+import { Route as AdminTemplatesIdRouteImport } from './routes/admin.templates.$id'
+import { Route as AdminTemplatesEditIdRouteImport } from './routes/admin.templates.edit.$id'
 
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminProfileRoute = AdminProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminComingSoonRoute = AdminComingSoonRouteImport.update({
+  id: '/coming-soon',
+  path: '/coming-soon',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminTemplatesIndexRoute = AdminTemplatesIndexRouteImport.update({
+  id: '/templates/',
+  path: '/templates/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminTemplatesCreateRoute = AdminTemplatesCreateRouteImport.update({
+  id: '/templates/create',
+  path: '/templates/create',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminTemplatesIdRoute = AdminTemplatesIdRouteImport.update({
+  id: '/templates/$id',
+  path: '/templates/$id',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminTemplatesEditIdRoute = AdminTemplatesEditIdRouteImport.update({
+  id: '/templates/edit/$id',
+  path: '/templates/edit/$id',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/login': typeof LoginRoute
+  '/admin/coming-soon': typeof AdminComingSoonRoute
+  '/admin/profile': typeof AdminProfileRoute
+  '/admin/': typeof AdminIndexRoute
+  '/admin/templates/$id': typeof AdminTemplatesIdRoute
+  '/admin/templates/create': typeof AdminTemplatesCreateRoute
+  '/admin/templates/': typeof AdminTemplatesIndexRoute
+  '/admin/templates/edit/$id': typeof AdminTemplatesEditIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/admin/coming-soon': typeof AdminComingSoonRoute
+  '/admin/profile': typeof AdminProfileRoute
+  '/admin': typeof AdminIndexRoute
+  '/admin/templates/$id': typeof AdminTemplatesIdRoute
+  '/admin/templates/create': typeof AdminTemplatesCreateRoute
+  '/admin/templates': typeof AdminTemplatesIndexRoute
+  '/admin/templates/edit/$id': typeof AdminTemplatesEditIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/login': typeof LoginRoute
+  '/admin/coming-soon': typeof AdminComingSoonRoute
+  '/admin/profile': typeof AdminProfileRoute
+  '/admin/': typeof AdminIndexRoute
+  '/admin/templates/$id': typeof AdminTemplatesIdRoute
+  '/admin/templates/create': typeof AdminTemplatesCreateRoute
+  '/admin/templates/': typeof AdminTemplatesIndexRoute
+  '/admin/templates/edit/$id': typeof AdminTemplatesEditIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/login'
+    | '/admin/coming-soon'
+    | '/admin/profile'
+    | '/admin/'
+    | '/admin/templates/$id'
+    | '/admin/templates/create'
+    | '/admin/templates/'
+    | '/admin/templates/edit/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/login'
+    | '/admin/coming-soon'
+    | '/admin/profile'
+    | '/admin'
+    | '/admin/templates/$id'
+    | '/admin/templates/create'
+    | '/admin/templates'
+    | '/admin/templates/edit/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/login'
+    | '/admin/coming-soon'
+    | '/admin/profile'
+    | '/admin/'
+    | '/admin/templates/$id'
+    | '/admin/templates/create'
+    | '/admin/templates/'
+    | '/admin/templates/edit/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRouteWithChildren
+  LoginRoute: typeof LoginRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +174,84 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/profile': {
+      id: '/admin/profile'
+      path: '/profile'
+      fullPath: '/admin/profile'
+      preLoaderRoute: typeof AdminProfileRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/coming-soon': {
+      id: '/admin/coming-soon'
+      path: '/coming-soon'
+      fullPath: '/admin/coming-soon'
+      preLoaderRoute: typeof AdminComingSoonRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/templates/': {
+      id: '/admin/templates/'
+      path: '/templates'
+      fullPath: '/admin/templates/'
+      preLoaderRoute: typeof AdminTemplatesIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/templates/create': {
+      id: '/admin/templates/create'
+      path: '/templates/create'
+      fullPath: '/admin/templates/create'
+      preLoaderRoute: typeof AdminTemplatesCreateRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/templates/$id': {
+      id: '/admin/templates/$id'
+      path: '/templates/$id'
+      fullPath: '/admin/templates/$id'
+      preLoaderRoute: typeof AdminTemplatesIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/templates/edit/$id': {
+      id: '/admin/templates/edit/$id'
+      path: '/templates/edit/$id'
+      fullPath: '/admin/templates/edit/$id'
+      preLoaderRoute: typeof AdminTemplatesEditIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
+interface AdminRouteChildren {
+  AdminComingSoonRoute: typeof AdminComingSoonRoute
+  AdminProfileRoute: typeof AdminProfileRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+  AdminTemplatesIdRoute: typeof AdminTemplatesIdRoute
+  AdminTemplatesCreateRoute: typeof AdminTemplatesCreateRoute
+  AdminTemplatesIndexRoute: typeof AdminTemplatesIndexRoute
+  AdminTemplatesEditIdRoute: typeof AdminTemplatesEditIdRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminComingSoonRoute: AdminComingSoonRoute,
+  AdminProfileRoute: AdminProfileRoute,
+  AdminIndexRoute: AdminIndexRoute,
+  AdminTemplatesIdRoute: AdminTemplatesIdRoute,
+  AdminTemplatesCreateRoute: AdminTemplatesCreateRoute,
+  AdminTemplatesIndexRoute: AdminTemplatesIndexRoute,
+  AdminTemplatesEditIdRoute: AdminTemplatesEditIdRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRouteWithChildren,
+  LoginRoute: LoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

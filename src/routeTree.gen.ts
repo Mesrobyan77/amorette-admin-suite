@@ -13,7 +13,12 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminProfileRouteImport } from './routes/admin.profile'
+import { Route as AdminComingSoonRouteImport } from './routes/admin.coming-soon'
 import { Route as AdminTemplatesIndexRouteImport } from './routes/admin.templates.index'
+import { Route as AdminTemplatesCreateRouteImport } from './routes/admin.templates.create'
+import { Route as AdminTemplatesIdRouteImport } from './routes/admin.templates.$id'
+import { Route as AdminTemplatesEditIdRouteImport } from './routes/admin.templates.edit.$id'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -35,9 +40,34 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminProfileRoute = AdminProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminComingSoonRoute = AdminComingSoonRouteImport.update({
+  id: '/coming-soon',
+  path: '/coming-soon',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminTemplatesIndexRoute = AdminTemplatesIndexRouteImport.update({
   id: '/templates/',
   path: '/templates/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminTemplatesCreateRoute = AdminTemplatesCreateRouteImport.update({
+  id: '/templates/create',
+  path: '/templates/create',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminTemplatesIdRoute = AdminTemplatesIdRouteImport.update({
+  id: '/templates/$id',
+  path: '/templates/$id',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminTemplatesEditIdRoute = AdminTemplatesEditIdRouteImport.update({
+  id: '/templates/edit/$id',
+  path: '/templates/edit/$id',
   getParentRoute: () => AdminRoute,
 } as any)
 
@@ -45,29 +75,74 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/login': typeof LoginRoute
+  '/admin/coming-soon': typeof AdminComingSoonRoute
+  '/admin/profile': typeof AdminProfileRoute
   '/admin/': typeof AdminIndexRoute
+  '/admin/templates/$id': typeof AdminTemplatesIdRoute
+  '/admin/templates/create': typeof AdminTemplatesCreateRoute
   '/admin/templates/': typeof AdminTemplatesIndexRoute
+  '/admin/templates/edit/$id': typeof AdminTemplatesEditIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/admin/coming-soon': typeof AdminComingSoonRoute
+  '/admin/profile': typeof AdminProfileRoute
   '/admin': typeof AdminIndexRoute
+  '/admin/templates/$id': typeof AdminTemplatesIdRoute
+  '/admin/templates/create': typeof AdminTemplatesCreateRoute
   '/admin/templates': typeof AdminTemplatesIndexRoute
+  '/admin/templates/edit/$id': typeof AdminTemplatesEditIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/login': typeof LoginRoute
+  '/admin/coming-soon': typeof AdminComingSoonRoute
+  '/admin/profile': typeof AdminProfileRoute
   '/admin/': typeof AdminIndexRoute
+  '/admin/templates/$id': typeof AdminTemplatesIdRoute
+  '/admin/templates/create': typeof AdminTemplatesCreateRoute
   '/admin/templates/': typeof AdminTemplatesIndexRoute
+  '/admin/templates/edit/$id': typeof AdminTemplatesEditIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin' | '/login' | '/admin/' | '/admin/templates/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/login'
+    | '/admin/coming-soon'
+    | '/admin/profile'
+    | '/admin/'
+    | '/admin/templates/$id'
+    | '/admin/templates/create'
+    | '/admin/templates/'
+    | '/admin/templates/edit/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/admin' | '/admin/templates'
-  id: '__root__' | '/' | '/admin' | '/login' | '/admin/' | '/admin/templates/'
+  to:
+    | '/'
+    | '/login'
+    | '/admin/coming-soon'
+    | '/admin/profile'
+    | '/admin'
+    | '/admin/templates/$id'
+    | '/admin/templates/create'
+    | '/admin/templates'
+    | '/admin/templates/edit/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/login'
+    | '/admin/coming-soon'
+    | '/admin/profile'
+    | '/admin/'
+    | '/admin/templates/$id'
+    | '/admin/templates/create'
+    | '/admin/templates/'
+    | '/admin/templates/edit/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -106,6 +181,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/profile': {
+      id: '/admin/profile'
+      path: '/profile'
+      fullPath: '/admin/profile'
+      preLoaderRoute: typeof AdminProfileRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/coming-soon': {
+      id: '/admin/coming-soon'
+      path: '/coming-soon'
+      fullPath: '/admin/coming-soon'
+      preLoaderRoute: typeof AdminComingSoonRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/templates/': {
       id: '/admin/templates/'
       path: '/templates'
@@ -113,17 +202,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminTemplatesIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/templates/create': {
+      id: '/admin/templates/create'
+      path: '/templates/create'
+      fullPath: '/admin/templates/create'
+      preLoaderRoute: typeof AdminTemplatesCreateRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/templates/$id': {
+      id: '/admin/templates/$id'
+      path: '/templates/$id'
+      fullPath: '/admin/templates/$id'
+      preLoaderRoute: typeof AdminTemplatesIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/templates/edit/$id': {
+      id: '/admin/templates/edit/$id'
+      path: '/templates/edit/$id'
+      fullPath: '/admin/templates/edit/$id'
+      preLoaderRoute: typeof AdminTemplatesEditIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
 interface AdminRouteChildren {
+  AdminComingSoonRoute: typeof AdminComingSoonRoute
+  AdminProfileRoute: typeof AdminProfileRoute
   AdminIndexRoute: typeof AdminIndexRoute
+  AdminTemplatesIdRoute: typeof AdminTemplatesIdRoute
+  AdminTemplatesCreateRoute: typeof AdminTemplatesCreateRoute
   AdminTemplatesIndexRoute: typeof AdminTemplatesIndexRoute
+  AdminTemplatesEditIdRoute: typeof AdminTemplatesEditIdRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminComingSoonRoute: AdminComingSoonRoute,
+  AdminProfileRoute: AdminProfileRoute,
   AdminIndexRoute: AdminIndexRoute,
+  AdminTemplatesIdRoute: AdminTemplatesIdRoute,
+  AdminTemplatesCreateRoute: AdminTemplatesCreateRoute,
   AdminTemplatesIndexRoute: AdminTemplatesIndexRoute,
+  AdminTemplatesEditIdRoute: AdminTemplatesEditIdRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
@@ -136,3 +256,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}

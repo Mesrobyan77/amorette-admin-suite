@@ -10,9 +10,9 @@ export const templateSchema = z.object({
   category: z.string().trim().max(80).optional().or(z.literal("")),
   description: z.string().trim().max(2000).optional().or(z.literal("")),
   basePrice: z.coerce.number({ invalid_type_error: "Required" }).positive("Must be positive"),
-  currency: z.string().trim().min(1).max(8).default("֏"),
+  currency: z.string().trim().min(1).max(8),
   musicTitle: z.string().trim().max(120).optional().or(z.literal("")),
-  features: z.array(featureSchema).max(50).default([]),
+  features: z.array(featureSchema).max(50),
 });
 
 export type TemplateInput = z.infer<typeof templateSchema>;

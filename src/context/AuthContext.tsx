@@ -3,6 +3,8 @@ import {
 } from "react";
 import { authApi, type AdminUser } from "@/api/auth";
 import { getAccessToken, setAccessToken } from "@/api/axios";
+import axios from "axios";
+import { API_BASE_URL } from "@/api/axios";
 
 interface AuthCtx {
   user: AdminUser | null;
@@ -32,8 +34,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let alive = true;
     (async () => {
-      const token = getAccessToken();
-      if (!token) { setLoading(false); return; }
+      let token = getAccessToken();
+      // No access token in memory — try silent refresh using httpOnly cookie
+      if (!token) {
+        try {
+          const { data } = await axios.post(
+            `${API_BASE_URL}/api/auth/refresh`,
+            {},
+            { withCredentials: true }
+          );
+          if (data?.accessToken) {
+            setAccessToken(data.accessToken);
+            token = data.accessToken;
+          }
+        } catch {
+          // no valid refresh session — stay logged out
+        }
+      }
+      if (!token) { if (alive) setLoading(false); return; }
       await loadMe();
       if (alive) setLoading(false);
     })();

@@ -1,9 +1,6 @@
-import {
-  createContext, useContext, useEffect, useMemo, useState, type ReactNode,
-} from "react";
-
-type Theme = "light" | "dark";
-const KEY = "amorette.theme";
+import { useEffect, useMemo, type ReactNode } from "react";
+import { useAppDispatch, useAppSelector } from "@/store";
+import { setTheme, toggleTheme, THEME_KEY, type Theme } from "@/store/slices/themeSlice";
 
 interface ThemeCtx {
   theme: Theme;
@@ -11,37 +8,29 @@ interface ThemeCtx {
   setTheme: (t: Theme) => void;
 }
 
-const ThemeContext = createContext<ThemeCtx | null>(null);
-
+/**
+ * ThemeProvider syncs Redux theme state with <html class> and localStorage.
+ * State itself lives in the Redux store (`state.theme`).
+ */
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("light");
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const stored = (localStorage.getItem(KEY) as Theme | null);
-    const prefers = window.matchMedia?.("(prefers-color-scheme: dark)").matches;
-    const initial: Theme = stored ?? (prefers ? "dark" : "light");
-    setThemeState(initial);
-  }, []);
+  const theme = useAppSelector((s) => s.theme.theme);
 
   useEffect(() => {
     if (typeof document === "undefined") return;
-    const root = document.documentElement;
-    root.classList.toggle("dark", theme === "dark");
-    try { localStorage.setItem(KEY, theme); } catch {}
+    document.documentElement.classList.toggle("dark", theme === "dark");
+    try { localStorage.setItem(THEME_KEY, theme); } catch {}
   }, [theme]);
 
-  const value = useMemo<ThemeCtx>(() => ({
-    theme,
-    setTheme: setThemeState,
-    toggle: () => setThemeState((t) => (t === "dark" ? "light" : "dark")),
-  }), [theme]);
-
-  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+  return <>{children}</>;
 }
 
-export function useTheme() {
-  const ctx = useContext(ThemeContext);
-  if (!ctx) throw new Error("useTheme must be used inside ThemeProvider");
-  return ctx;
+export function useTheme(): ThemeCtx {
+  const dispatch = useAppDispatch();
+  const theme = useAppSelector((s) => s.theme.theme);
+
+  return useMemo<ThemeCtx>(() => ({
+    theme,
+    setTheme: (t) => dispatch(setTheme(t)),
+    toggle: () => dispatch(toggleTheme()),
+  }), [theme, dispatch]);
 }

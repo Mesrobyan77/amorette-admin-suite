@@ -1,10 +1,9 @@
+import { useEffect, useMemo, type ReactNode } from "react";
+import { useAppDispatch, useAppSelector } from "@/store";
 import {
-  createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode,
-} from "react";
-import { authApi, type AdminUser } from "@/api/auth";
-import { getAccessToken, setAccessToken } from "@/api/axios";
-import axios from "axios";
-import { API_BASE_URL } from "@/api/axios";
+  initializeAuth, loginThunk, logoutThunk, logoutAllThunk, refreshMeThunk,
+} from "@/store/slices/authSlice";
+import type { AdminUser } from "@/api/auth";
 
 interface AuthCtx {
   user: AdminUser | null;
@@ -16,80 +15,34 @@ interface AuthCtx {
   refreshMe: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthCtx | null>(null);
-
+/**
+ * AuthProvider now bootstraps the Redux auth state on mount.
+ * State itself lives in the Redux store (`state.auth`).
+ */
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AdminUser | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  const loadMe = useCallback(async () => {
-    try {
-      const { data } = await authApi.me();
-      setUser(data);
-    } catch {
-      setUser(null);
-    }
-  }, []);
+  const dispatch = useAppDispatch();
+  const initialized = useAppSelector((s) => s.auth.initialized);
 
   useEffect(() => {
-    let alive = true;
-    (async () => {
-      let token = getAccessToken();
-      // No access token in memory — try silent refresh using httpOnly cookie
-      if (!token) {
-        try {
-          const { data } = await axios.post(
-            `${API_BASE_URL}/api/auth/refresh`,
-            {},
-            { withCredentials: true }
-          );
-          if (data?.accessToken) {
-            setAccessToken(data.accessToken);
-            token = data.accessToken;
-          }
-        } catch {
-          // no valid refresh session — stay logged out
-        }
-      }
-      if (!token) { if (alive) setLoading(false); return; }
-      await loadMe();
-      if (alive) setLoading(false);
-    })();
-    return () => { alive = false; };
-  }, [loadMe]);
+    if (!initialized) dispatch(initializeAuth());
+  }, [dispatch, initialized]);
 
-  const login = useCallback(async (email: string, password: string) => {
-    const { data } = await authApi.login(email, password);
-    setAccessToken(data.accessToken);
-    if (data.user) setUser(data.user);
-    else await loadMe();
-  }, [loadMe]);
+  return <>{children}</>;
+}
 
-  const logout = useCallback(async () => {
-    try { await authApi.logout(); } catch {}
-    setAccessToken(null);
-    setUser(null);
-  }, []);
+export function useAuth(): AuthCtx {
+  const dispatch = useAppDispatch();
+  const { user, loading } = useAppSelector((s) => s.auth);
 
-  const logoutAll = useCallback(async () => {
-    try { await authApi.logoutAll(); } catch {}
-    setAccessToken(null);
-    setUser(null);
-  }, []);
-
-  const value = useMemo<AuthCtx>(() => ({
+  return useMemo<AuthCtx>(() => ({
     user,
     isAuthenticated: !!user,
     loading,
-    login, logout, logoutAll,
-    refreshMe: loadMe,
-  }), [user, loading, login, logout, logoutAll, loadMe]);
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
-
-export function useAuth() {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth must be used inside AuthProvider");
-  return ctx;
+    login: async (email, password) => {
+      await dispatch(loginThunk({ email, password })).unwrap();
+    },
+    logout: async () => { await dispatch(logoutThunk()); },
+    logoutAll: async () => { await dispatch(logoutAllThunk()); },
+    refreshMe: async () => { await dispatch(refreshMeThunk()); },
+  }), [user, loading, dispatch]);
 }

@@ -1,8 +1,10 @@
 import { Outlet, createRootRoute, HeadContent, Scripts, Link } from "@tanstack/react-router";
 import { Toaster } from "react-hot-toast";
+import { Provider as ReduxProvider } from "react-redux";
 import appCss from "../styles.css?url";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { AuthProvider } from "@/context/AuthContext";
+import { store } from "@/store";
 
 function NotFoundComponent() {
   return (
@@ -60,17 +62,19 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <Outlet />
-        <Toaster
-          position="top-right"
-          toastOptions={{
-            className: "!rounded-2xl !bg-card !text-foreground !border !border-border",
-            style: { padding: "12px 16px", fontSize: 14 },
-          }}
-        />
-      </AuthProvider>
-    </ThemeProvider>
+    <ReduxProvider store={store}>
+      <ThemeProvider>
+        <AuthProvider>
+          <Outlet />
+          <Toaster
+            position="top-right"
+            toastOptions={{
+              className: "!rounded-2xl !bg-card !text-foreground !border !border-border",
+              style: { padding: "12px 16px", fontSize: 14 },
+            }}
+          />
+        </AuthProvider>
+      </ThemeProvider>
+    </ReduxProvider>
   );
 }

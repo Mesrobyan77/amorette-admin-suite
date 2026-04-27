@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  LayoutDashboard, FileImage, Plus, User, Sparkles, LogOut, ChevronDown, Menu, X,
+  LayoutDashboard, FileImage, Plus, User, Sparkles, LogOut, ChevronDown, Menu, X, ScrollText,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { cn } from "@/utils/format";
@@ -22,6 +22,7 @@ const topLinks: NavLink[] = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard },
 ];
 const bottomLinks: NavLink[] = [
+  { to: "/admin/audit-logs", label: "Audit Logs", icon: ScrollText },
   { to: "/admin/profile", label: "Profile", icon: User },
   { to: "/admin/coming-soon", label: "Coming Soon", icon: Sparkles },
 ];

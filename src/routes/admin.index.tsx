@@ -1,12 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { FileImage, Eye, Star, Sparkles, Plus, ArrowUpRight } from "lucide-react";
+import { FileImage, Eye, Star, Sparkles, Plus, ArrowUpRight, TrendingUp } from "lucide-react";
 import { templatesApi, type Template } from "@/api/templates";
+import { analyticsApi, deriveTrendsFromTemplates, type TrendPoint } from "@/api/analytics";
 import { Card, CardTitle } from "@/components/ui/Card";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Button } from "@/components/ui/Button";
-import { formatCurrency, formatDate } from "@/utils/format";
+import { TrendChart } from "@/components/ui/TrendChart";
+import { DateRangePicker, rangeFromPreset, type DateRange } from "@/components/ui/DateRangePicker";
+import { formatCurrency, formatDate, cn } from "@/utils/format";
 
 export const Route = createFileRoute("/admin/")({
   component: DashboardPage,
@@ -23,6 +26,12 @@ function DashboardPage() {
   const [templates, setTemplates] = useState<Template[] | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // Chart state
+  const [range, setRange] = useState<DateRange>(() => rangeFromPreset("30d"));
+  const [metric, setMetric] = useState<"views" | "rating">("views");
+  const [trend, setTrend] = useState<TrendPoint[] | null>(null);
+  const [trendFallback, setTrendFallback] = useState(false);
+
   useEffect(() => {
     let alive = true;
     (async () => {
@@ -36,6 +45,34 @@ function DashboardPage() {
     })();
     return () => { alive = false; };
   }, []);
+
+  // Fetch trends when range changes; gracefully fall back to derived data.
+  useEffect(() => {
+    let alive = true;
+    setTrend(null);
+    (async () => {
+      try {
+        const { data } = await analyticsApi.trends({
+          from: range.from.toISOString(),
+          to: range.to.toISOString(),
+        });
+        if (!alive) return;
+        setTrend(Array.isArray((data as any)?.series) ? (data as any).series : []);
+        setTrendFallback(false);
+      } catch {
+        if (!alive) return;
+        // Backend not ready — derive from templates once they're loaded
+        setTrendFallback(true);
+      }
+    })();
+    return () => { alive = false; };
+  }, [range.from, range.to]);
+
+  const fallbackSeries = useMemo(
+    () => (trendFallback && templates ? deriveTrendsFromTemplates(templates, range.from, range.to) : null),
+    [trendFallback, templates, range.from, range.to],
+  );
+  const chartData = trend ?? fallbackSeries ?? [];
 
   const total = templates?.length ?? 0;
   const totalViews = templates?.reduce((s, t) => s + (t.views || 0), 0) ?? 0;
@@ -98,6 +135,46 @@ function DashboardPage() {
           </motion.div>
         ))}
       </div>
+
+      <Card>
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 mb-4">
+          <div>
+            <CardTitle>
+              <span className="inline-flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-[var(--gold)]" /> Trends
+              </span>
+            </CardTitle>
+            <p className="text-xs text-muted-foreground mt-1">
+              {trendFallback ? "Showing estimated data" : "Live analytics"} · {range.from.toLocaleDateString()} — {range.to.toLocaleDateString()}
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="inline-flex rounded-2xl border border-border bg-card p-1">
+              {(["views", "rating"] as const).map((m) => {
+                const active = metric === m;
+                return (
+                  <button
+                    key={m}
+                    onClick={() => setMetric(m)}
+                    className={cn(
+                      "px-3 h-8 rounded-xl text-xs font-medium transition capitalize",
+                      active ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground",
+                    )}
+                  >
+                    {m}
+                  </button>
+                );
+              })}
+            </div>
+            <DateRangePicker value={range} onChange={setRange} />
+          </div>
+        </div>
+        {chartData.length === 0 ? (
+          <Skeleton className="h-64 sm:h-72 w-full" />
+        ) : (
+          <TrendChart data={chartData} metric={metric} />
+        )}
+      </Card>
 
       <Card>
         <div className="flex items-center justify-between mb-4">

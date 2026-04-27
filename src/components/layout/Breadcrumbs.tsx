@@ -8,6 +8,7 @@ const labels: Record<string, string> = {
   edit: "Edit",
   profile: "Profile",
   "coming-soon": "Coming Soon",
+  "audit-logs": "Audit Logs",
 };
 
 export function Breadcrumbs() {

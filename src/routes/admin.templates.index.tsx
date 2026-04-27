@@ -302,7 +302,7 @@ function TemplatesListPage() {
       <ConfirmDeleteModal
         open={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}
-        onConfirm={() => deleteTarget && doDelete(deleteTarget)}
+        onConfirm={async () => { if (deleteTarget) await doDelete(deleteTarget); }}
         itemName={deleteTarget?.name || ""}
         title="Delete template"
       />

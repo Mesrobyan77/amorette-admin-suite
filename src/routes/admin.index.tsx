@@ -137,6 +137,46 @@ function DashboardPage() {
       </div>
 
       <Card>
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 mb-4">
+          <div>
+            <CardTitle>
+              <span className="inline-flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-[var(--gold)]" /> Trends
+              </span>
+            </CardTitle>
+            <p className="text-xs text-muted-foreground mt-1">
+              {trendFallback ? "Showing estimated data" : "Live analytics"} · {range.from.toLocaleDateString()} — {range.to.toLocaleDateString()}
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="inline-flex rounded-2xl border border-border bg-card p-1">
+              {(["views", "rating"] as const).map((m) => {
+                const active = metric === m;
+                return (
+                  <button
+                    key={m}
+                    onClick={() => setMetric(m)}
+                    className={cn(
+                      "px-3 h-8 rounded-xl text-xs font-medium transition capitalize",
+                      active ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground",
+                    )}
+                  >
+                    {m}
+                  </button>
+                );
+              })}
+            </div>
+            <DateRangePicker value={range} onChange={setRange} />
+          </div>
+        </div>
+        {chartData.length === 0 ? (
+          <Skeleton className="h-64 sm:h-72 w-full" />
+        ) : (
+          <TrendChart data={chartData} metric={metric} />
+        )}
+      </Card>
+
+      <Card>
         <div className="flex items-center justify-between mb-4">
           <CardTitle>Latest Templates</CardTitle>
           <Link to="/admin/templates" className="text-sm text-primary inline-flex items-center gap-1 hover:underline">

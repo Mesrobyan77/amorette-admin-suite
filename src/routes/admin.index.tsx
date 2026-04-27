@@ -26,6 +26,12 @@ function DashboardPage() {
   const [templates, setTemplates] = useState<Template[] | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // Chart state
+  const [range, setRange] = useState<DateRange>(() => rangeFromPreset("30d"));
+  const [metric, setMetric] = useState<"views" | "rating">("views");
+  const [trend, setTrend] = useState<TrendPoint[] | null>(null);
+  const [trendFallback, setTrendFallback] = useState(false);
+
   useEffect(() => {
     let alive = true;
     (async () => {
@@ -39,6 +45,34 @@ function DashboardPage() {
     })();
     return () => { alive = false; };
   }, []);
+
+  // Fetch trends when range changes; gracefully fall back to derived data.
+  useEffect(() => {
+    let alive = true;
+    setTrend(null);
+    (async () => {
+      try {
+        const { data } = await analyticsApi.trends({
+          from: range.from.toISOString(),
+          to: range.to.toISOString(),
+        });
+        if (!alive) return;
+        setTrend(Array.isArray((data as any)?.series) ? (data as any).series : []);
+        setTrendFallback(false);
+      } catch {
+        if (!alive) return;
+        // Backend not ready — derive from templates once they're loaded
+        setTrendFallback(true);
+      }
+    })();
+    return () => { alive = false; };
+  }, [range.from, range.to]);
+
+  const fallbackSeries = useMemo(
+    () => (trendFallback && templates ? deriveTrendsFromTemplates(templates, range.from, range.to) : null),
+    [trendFallback, templates, range.from, range.to],
+  );
+  const chartData = trend ?? fallbackSeries ?? [];
 
   const total = templates?.length ?? 0;
   const totalViews = templates?.reduce((s, t) => s + (t.views || 0), 0) ?? 0;

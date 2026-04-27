@@ -1,12 +1,11 @@
-import { forwardRef, type ButtonHTMLAttributes } from "react";
+import { forwardRef } from "react";
 import { motion, type HTMLMotionProps } from "framer-motion";
 import { cn } from "@/utils/format";
 
 type Variant = "primary" | "secondary" | "ghost" | "outline" | "destructive" | "gold";
 type Size = "sm" | "md" | "lg" | "icon";
 
-export interface LuxButtonProps
-  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, keyof HTMLMotionProps<"button">> {
+export interface LuxButtonProps extends HTMLMotionProps<"button"> {
   variant?: Variant;
   size?: Size;
   loading?: boolean;

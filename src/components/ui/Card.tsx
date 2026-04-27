@@ -1,11 +1,9 @@
-import type { ReactNode, HTMLAttributes } from "react";
+import type { ReactNode } from "react";
 import { motion, type HTMLMotionProps } from "framer-motion";
 import { cn } from "@/utils/format";
 
-type DivAttrs = Omit<HTMLAttributes<HTMLDivElement>, keyof HTMLMotionProps<"div">>;
-
-interface CardProps extends DivAttrs {
-  children: ReactNode;
+interface CardProps extends HTMLMotionProps<"div"> {
+  children?: ReactNode;
   hoverable?: boolean;
   glass?: boolean;
 }

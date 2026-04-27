@@ -1,12 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { FileImage, Eye, Star, Sparkles, Plus, ArrowUpRight } from "lucide-react";
+import { FileImage, Eye, Star, Sparkles, Plus, ArrowUpRight, TrendingUp } from "lucide-react";
 import { templatesApi, type Template } from "@/api/templates";
+import { analyticsApi, deriveTrendsFromTemplates, type TrendPoint } from "@/api/analytics";
 import { Card, CardTitle } from "@/components/ui/Card";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Button } from "@/components/ui/Button";
-import { formatCurrency, formatDate } from "@/utils/format";
+import { TrendChart } from "@/components/ui/TrendChart";
+import { DateRangePicker, rangeFromPreset, type DateRange } from "@/components/ui/DateRangePicker";
+import { formatCurrency, formatDate, cn } from "@/utils/format";
 
 export const Route = createFileRoute("/admin/")({
   component: DashboardPage,

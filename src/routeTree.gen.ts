@@ -15,6 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminProfileRouteImport } from './routes/admin.profile'
 import { Route as AdminComingSoonRouteImport } from './routes/admin.coming-soon'
+import { Route as AdminAuditLogsRouteImport } from './routes/admin.audit-logs'
 import { Route as AdminTemplatesIndexRouteImport } from './routes/admin.templates.index'
 import { Route as AdminTemplatesCreateRouteImport } from './routes/admin.templates.create'
 import { Route as AdminTemplatesIdRouteImport } from './routes/admin.templates.$id'
@@ -50,6 +51,11 @@ const AdminComingSoonRoute = AdminComingSoonRouteImport.update({
   path: '/coming-soon',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAuditLogsRoute = AdminAuditLogsRouteImport.update({
+  id: '/audit-logs',
+  path: '/audit-logs',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminTemplatesIndexRoute = AdminTemplatesIndexRouteImport.update({
   id: '/templates/',
   path: '/templates/',
@@ -75,6 +81,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/login': typeof LoginRoute
+  '/admin/audit-logs': typeof AdminAuditLogsRoute
   '/admin/coming-soon': typeof AdminComingSoonRoute
   '/admin/profile': typeof AdminProfileRoute
   '/admin/': typeof AdminIndexRoute
@@ -86,6 +93,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/admin/audit-logs': typeof AdminAuditLogsRoute
   '/admin/coming-soon': typeof AdminComingSoonRoute
   '/admin/profile': typeof AdminProfileRoute
   '/admin': typeof AdminIndexRoute
@@ -99,6 +107,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/login': typeof LoginRoute
+  '/admin/audit-logs': typeof AdminAuditLogsRoute
   '/admin/coming-soon': typeof AdminComingSoonRoute
   '/admin/profile': typeof AdminProfileRoute
   '/admin/': typeof AdminIndexRoute
@@ -113,6 +122,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/login'
+    | '/admin/audit-logs'
     | '/admin/coming-soon'
     | '/admin/profile'
     | '/admin/'
@@ -124,6 +134,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/login'
+    | '/admin/audit-logs'
     | '/admin/coming-soon'
     | '/admin/profile'
     | '/admin'
@@ -136,6 +147,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/login'
+    | '/admin/audit-logs'
     | '/admin/coming-soon'
     | '/admin/profile'
     | '/admin/'
@@ -195,6 +207,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminComingSoonRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/audit-logs': {
+      id: '/admin/audit-logs'
+      path: '/audit-logs'
+      fullPath: '/admin/audit-logs'
+      preLoaderRoute: typeof AdminAuditLogsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/templates/': {
       id: '/admin/templates/'
       path: '/templates'
@@ -227,6 +246,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminAuditLogsRoute: typeof AdminAuditLogsRoute
   AdminComingSoonRoute: typeof AdminComingSoonRoute
   AdminProfileRoute: typeof AdminProfileRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -237,6 +257,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminAuditLogsRoute: AdminAuditLogsRoute,
   AdminComingSoonRoute: AdminComingSoonRoute,
   AdminProfileRoute: AdminProfileRoute,
   AdminIndexRoute: AdminIndexRoute,

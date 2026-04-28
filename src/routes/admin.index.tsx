@@ -11,7 +11,7 @@ import { TrendChart } from "@/components/ui/TrendChart";
 import { DateRangePicker, rangeFromPreset, type DateRange } from "@/components/ui/DateRangePicker";
 import { formatCurrency, formatDate, cn } from "@/utils/format";
 
-export const Route = createFileRoute("/admin/")({
+export const Route = createFileRoute("/admin")({
   component: DashboardPage,
 });
 

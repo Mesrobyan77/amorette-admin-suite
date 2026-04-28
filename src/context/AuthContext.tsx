@@ -1,7 +1,11 @@
 import { useEffect, useMemo, type ReactNode } from "react";
 import { useAppDispatch, useAppSelector } from "@/store";
 import {
-  initializeAuth, loginThunk, logoutThunk, logoutAllThunk, refreshMeThunk,
+  initializeAuth,
+  loginThunk,
+  logoutThunk,
+  logoutAllThunk,
+  refreshMeThunk,
 } from "@/store/slices/authSlice";
 import type { AdminUser } from "@/api/auth";
 
@@ -34,15 +38,24 @@ export function useAuth(): AuthCtx {
   const dispatch = useAppDispatch();
   const { user, loading } = useAppSelector((s) => s.auth);
 
-  return useMemo<AuthCtx>(() => ({
-    user,
-    isAuthenticated: !!user,
-    loading,
-    login: async (email, password) => {
-      await dispatch(loginThunk({ email, password })).unwrap();
-    },
-    logout: async () => { await dispatch(logoutThunk()); },
-    logoutAll: async () => { await dispatch(logoutAllThunk()); },
-    refreshMe: async () => { await dispatch(refreshMeThunk()); },
-  }), [user, loading, dispatch]);
+  return useMemo<AuthCtx>(
+    () => ({
+      user,
+      isAuthenticated: !!user,
+      loading,
+      login: async (email, password) => {
+        await dispatch(loginThunk({ email, password })).unwrap();
+      },
+      logout: async () => {
+        await dispatch(logoutThunk());
+      },
+      logoutAll: async () => {
+        await dispatch(logoutAllThunk());
+      },
+      refreshMe: async () => {
+        await dispatch(refreshMeThunk());
+      },
+    }),
+    [user, loading, dispatch],
+  );
 }

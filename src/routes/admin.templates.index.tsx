@@ -14,7 +14,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { ConfirmDeleteModal } from "@/components/ui/ConfirmDeleteModal";
 import { formatCurrency, formatDate, cn } from "@/utils/format";
 
-export const Route = createFileRoute("/admin/templates/")({
+export const Route = createFileRoute("/admin/templates")({
   component: TemplatesListPage,
 });
 

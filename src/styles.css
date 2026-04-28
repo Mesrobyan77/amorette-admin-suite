@@ -1,6 +1,7 @@
 @import "tailwindcss" source(none);
-@source "../src";
 @import "tw-animate-css";
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap");
+@source "../src";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -207,6 +208,3 @@
   }
   .animate-glow { animation: glow-pulse 3s ease-in-out infinite; }
 }
-
-/* Display font from Google */
-@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap");

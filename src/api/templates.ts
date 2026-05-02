@@ -19,6 +19,7 @@ export interface Template {
   musicUrl?: string;
   musicTitle?: string;
   features?: TemplateFeature[];
+  demoLink?: string;
   views?: number;
   rating?: number;
   createdAt?: string;
@@ -29,6 +30,12 @@ export interface TemplateListResponse {
   items?: Template[];
   data?: Template[];
   total?: number;
+  pagination?: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
 }
 
 export const templatesApi = {

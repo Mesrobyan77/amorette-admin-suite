@@ -12,6 +12,7 @@ export const templateSchema = z.object({
   basePrice: z.coerce.number({ invalid_type_error: "Required" }).positive("Must be positive"),
   currency: z.string().trim().min(1).max(8),
   musicTitle: z.string().trim().max(120).optional().or(z.literal("")),
+  demoLink: z.string().trim().url("Invalid URL").optional().or(z.literal("")),
   features: z.array(featureSchema).max(50),
 });
 

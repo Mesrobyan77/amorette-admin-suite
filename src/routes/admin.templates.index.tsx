@@ -40,6 +40,12 @@ function extractList(payload: any): Template[] {
 function TemplatesListPage() {
   const navigate = useNavigate();
   const [templates, setTemplates] = useState<Template[] | null>(null);
+  const [pagination, setPagination] = useState<{
+    total: number;
+    page: number;
+    totalPages: number;
+  } | null>(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<string>("all");
@@ -51,80 +57,43 @@ function TemplatesListPage() {
   const [bulkOpen, setBulkOpen] = useState(false);
 
   const load = async () => {
-    setTemplates(null);
+    setLoading(true);
     setError(null);
     try {
-      const { data } = await templatesApi.list();
-      setTemplates(extractList(data));
+      // Note: Backend doesn't support 'sort' parameter in getAll yet, 
+      // but we pass it for future compatibility.
+      const { data } = await templatesApi.list({
+        page,
+        limit: PAGE_SIZE,
+        category: category === "all" ? undefined : category,
+        search: search || undefined,
+        // showAll: true, // If we decide to add this to backend
+      });
+
+      if (data && "pagination" in data) {
+        setTemplates(data.data || []);
+        setPagination(data.pagination || null);
+      } else {
+        setTemplates(extractList(data));
+        setPagination(null);
+      }
     } catch (e: any) {
       setError(e?.response?.data?.message || "Failed to load templates");
       setTemplates([]);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     load();
-  }, []);
+  }, [page, category, search]); // Reload on these changes
 
-  const categories = useMemo(() => {
-    const set = new Set<string>();
-    (templates || []).forEach((t) => {
-      if (t.category) set.add(t.category);
-    });
-    return ["all", ...Array.from(set)];
-  }, [templates]);
-
-  const filtered = useMemo(() => {
-    let list = templates || [];
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      list = list.filter(
-        (t) =>
-          t.name.toLowerCase().includes(q) ||
-          (t.category || "").toLowerCase().includes(q) ||
-          (t.description || "").toLowerCase().includes(q),
-      );
-    }
-    if (category !== "all") list = list.filter((t) => t.category === category);
-
-    list = list.slice().sort((a, b) => {
-      switch (sort) {
-        case "oldest":
-          return new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime();
-        case "price-asc":
-          return (a.basePrice || 0) - (b.basePrice || 0);
-        case "price-desc":
-          return (b.basePrice || 0) - (a.basePrice || 0);
-        case "name":
-          return a.name.localeCompare(b.name);
-        case "newest":
-        default:
-          return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
-      }
-    });
-    return list;
-  }, [templates, search, category, sort]);
-
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const pageItems = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-  useEffect(() => {
-    if (page > totalPages) setPage(1);
-  }, [totalPages, page]);
-
-  const allOnPageSelected =
-    pageItems.length > 0 && pageItems.every((t) => selected.has((t.id || t._id) as string));
-  const togglePageSelection = () => {
-    const next = new Set(selected);
-    if (allOnPageSelected) pageItems.forEach((t) => next.delete((t.id || t._id) as string));
-    else pageItems.forEach((t) => next.add((t.id || t._id) as string));
-    setSelected(next);
-  };
-  const toggleOne = (id: string) => {
-    const next = new Set(selected);
-    if (next.has(id)) next.delete(id);
-    else next.add(id);
-    setSelected(next);
-  };
+  // Categories are still fetched from current list for the dropdown, 
+  // though ideally they should come from a separate API or a 'all-categories' endpoint.
+  // For now, we'll keep this logic but it will only show categories on the current page.
+  // Better yet, let's hardcode the known categories to match the Form.
+  const categories = ["all", "Հարսանիք", "Կնունք", "Նշանդրեք", "Ծնունդ", "Այլ"];
 
   const doDelete = async (t: Template) => {
     const id = (t.id || t._id) as string;
@@ -133,7 +102,7 @@ function TemplatesListPage() {
       success: "Template deleted",
       error: "Delete failed",
     });
-    setTemplates((prev) => (prev || []).filter((x) => (x.id || x._id) !== id));
+    load(); // Reload to get updated pagination
     setSelected((prev) => {
       const n = new Set(prev);
       n.delete(id);
@@ -148,8 +117,28 @@ function TemplatesListPage() {
       success: "Bulk delete complete",
       error: "Some deletions failed",
     });
-    setTemplates((prev) => (prev || []).filter((x) => !ids.includes((x.id || x._id) as string)));
+    load(); // Reload
     setSelected(new Set());
+  };
+
+  const totalPages = pagination?.totalPages || 1;
+  const totalItems = pagination?.total || 0;
+
+  const allOnPageSelected =
+    templates && templates.length > 0 && templates.every((t) => selected.has((t.id || t._id) as string));
+  
+  const togglePageSelection = () => {
+    const next = new Set(selected);
+    if (allOnPageSelected) templates?.forEach((t) => next.delete((t.id || t._id) as string));
+    else templates?.forEach((t) => next.add((t.id || t._id) as string));
+    setSelected(next);
+  };
+
+  const toggleOne = (id: string) => {
+    const next = new Set(selected);
+    if (next.has(id)) next.delete(id);
+    else next.add(id);
+    setSelected(next);
   };
 
   return (
@@ -158,7 +147,7 @@ function TemplatesListPage() {
         <div>
           <h1 className="font-display text-3xl">Templates</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            {filtered.length} of {templates?.length ?? 0} templates
+            {totalItems} templates found
           </p>
         </div>
         <Link to="/admin/templates/create">
@@ -176,13 +165,19 @@ function TemplatesListPage() {
               placeholder="Search templates…"
               className="pl-10"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1); // Reset to first page on search
+              }}
             />
           </div>
           <div className="grid grid-cols-2 gap-3 lg:flex">
             <select
               value={category}
-              onChange={(e) => setCategory(e.target.value)}
+              onChange={(e) => {
+                setCategory(e.target.value);
+                setPage(1); // Reset to first page on category change
+              }}
               className="h-11 px-4 rounded-2xl bg-card border border-border focus:outline-none focus:ring-2 focus:ring-ring text-sm"
             >
               {categories.map((c) => (
@@ -230,13 +225,13 @@ function TemplatesListPage() {
         </div>
       )}
 
-      {templates === null ? (
+      {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {Array.from({ length: 6 }).map((_, i) => (
             <Skeleton key={i} className="h-72" />
           ))}
         </div>
-      ) : pageItems.length === 0 ? (
+      ) : !templates || templates.length === 0 ? (
         <Card className="text-center py-16">
           <FileImage className="h-12 w-12 mx-auto text-muted-foreground/60" />
           <h3 className="font-display text-2xl mt-3">No templates found</h3>
@@ -266,7 +261,7 @@ function TemplatesListPage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {pageItems.map((t) => {
+            {templates.map((t) => {
               const id = (t.id || t._id) as string;
               const isSelected = selected.has(id);
               return (
@@ -320,10 +315,11 @@ function TemplatesListPage() {
                       </span>
                       <span className="inline-flex items-center gap-1">★ {t.rating ?? "—"}</span>
                     </div>
-                    <div className="mt-4 grid grid-cols-2 sm:flex sm:flex-wrap gap-2">
+                    <div className="mt-4 flex flex-wrap gap-2">
                       <Button
                         size="sm"
                         variant="outline"
+                        className="flex-1"
                         onClick={() => navigate({ to: "/admin/templates/$id", params: { id } })}
                       >
                         <Eye className="h-3.5 w-3.5" /> View
@@ -331,12 +327,23 @@ function TemplatesListPage() {
                       <Button
                         size="sm"
                         variant="ghost"
+                        className="flex-1"
                         onClick={() =>
                           navigate({ to: "/admin/templates/edit/$id", params: { id } })
                         }
                       >
                         <Pencil className="h-3.5 w-3.5" /> Edit
                       </Button>
+                      {t.demoLink && (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="flex-1 text-primary hover:bg-primary/10"
+                          onClick={() => window.open(t.demoLink, "_blank")}
+                        >
+                          Demo
+                        </Button>
+                      )}
                       <Button
                         size="sm"
                         variant="ghost"

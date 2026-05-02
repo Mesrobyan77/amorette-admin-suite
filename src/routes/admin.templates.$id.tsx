@@ -180,6 +180,16 @@ function TemplateDetailPage() {
                 <Star className="h-4 w-4 text-[var(--gold)]" /> {template.rating ?? "—"}
               </div>
             </div>
+            {template.demoLink && (
+              <Button
+                variant="gold"
+                fullWidth
+                className="mt-5"
+                onClick={() => window.open(template.demoLink, "_blank")}
+              >
+                <Eye className="h-4 w-4" /> Live Demo
+              </Button>
+            )}
           </Card>
 
           {(template.musicUrl || template.music) && (

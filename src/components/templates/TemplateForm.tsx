@@ -59,6 +59,7 @@ export function TemplateForm({ initial, submitLabel = "Save", onSubmit }: Props)
       basePrice: initial?.basePrice ?? (undefined as any),
       currency: initial?.currency || "֏",
       musicTitle: initial?.musicTitle || "",
+      demoLink: initial?.demoLink || "",
       features: defaultFeatures,
     },
   });
@@ -138,6 +139,12 @@ export function TemplateForm({ initial, submitLabel = "Save", onSubmit }: Props)
               placeholder="֏"
               error={errors.currency?.message}
               {...register("currency")}
+            />
+            <Input
+              label="Demo Link"
+              placeholder="https://demo.amorette.am/royal-ivory"
+              error={errors.demoLink?.message}
+              {...register("demoLink")}
             />
           </div>
           <Textarea

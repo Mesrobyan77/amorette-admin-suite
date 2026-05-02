@@ -10,24 +10,32 @@ export const Route = createFileRoute("/admin/templates/edit/$id")({
 });
 
 function buildEditFormData(initial: Template, data: TemplateFormSubmit) {
-  const { values, mainImage, gallery, music, removedGalleryUrls, mainImageRemoved, musicRemoved } = data;
+  const { values, mainImage, gallery, music, removedGalleryUrls, mainImageRemoved, musicRemoved } =
+    data;
   const fd = new FormData();
   // Always send text fields (changes are cheap to detect server-side)
   if (values.name !== initial.name) fd.append("name", values.name);
-  if ((values.category || "") !== (initial.category || "")) fd.append("category", values.category || "");
-  if ((values.description || "") !== (initial.description || "")) fd.append("description", values.description || "");
-  if (Number(values.basePrice) !== Number(initial.basePrice)) fd.append("basePrice", String(values.basePrice));
-  if ((values.currency || "֏") !== (initial.currency || "֏")) fd.append("currency", values.currency || "֏");
-  if ((values.musicTitle || "") !== (initial.musicTitle || "")) fd.append("musicTitle", values.musicTitle || "");
+  if ((values.category || "") !== (initial.category || ""))
+    fd.append("category", values.category || "");
+  if ((values.description || "") !== (initial.description || ""))
+    fd.append("description", values.description || "");
+  if (Number(values.basePrice) !== Number(initial.basePrice))
+    fd.append("basePrice", String(values.basePrice));
+  if ((values.currency || "֏") !== (initial.currency || "֏"))
+    fd.append("currency", values.currency || "֏");
+  if ((values.musicTitle || "") !== (initial.musicTitle || ""))
+    fd.append("musicTitle", values.musicTitle || "");
 
-  const featuresChanged = JSON.stringify(values.features || []) !== JSON.stringify(initial.features || []);
+  const featuresChanged =
+    JSON.stringify(values.features || []) !== JSON.stringify(initial.features || []);
   if (featuresChanged) fd.append("features", JSON.stringify(values.features || []));
 
   if (mainImage) fd.append("mainImage", mainImage);
   else if (mainImageRemoved) fd.append("mainImageRemoved", "true");
 
   if (gallery.length > 0) gallery.forEach((f) => fd.append("gallery", f));
-  if (removedGalleryUrls.length > 0) fd.append("removedGallery", JSON.stringify(removedGalleryUrls));
+  if (removedGalleryUrls.length > 0)
+    fd.append("removedGallery", JSON.stringify(removedGalleryUrls));
 
   if (music) fd.append("music", music);
   else if (musicRemoved) fd.append("musicRemoved", "true");
@@ -46,12 +54,15 @@ function EditTemplatePage() {
     (async () => {
       try {
         const { data } = await templatesApi.get(id);
-        if (alive) setTemplate(data);
+        const templateData = (data as any)?.data || data;
+        if (alive) setTemplate(templateData);
       } catch (e: any) {
         if (alive) setError(e?.response?.data?.message || "Failed to load template");
       }
     })();
-    return () => { alive = false; };
+    return () => {
+      alive = false;
+    };
   }, [id]);
 
   const handleSubmit = async (data: TemplateFormSubmit) => {
@@ -72,7 +83,11 @@ function EditTemplatePage() {
   };
 
   if (error) {
-    return <div className="rounded-2xl border border-destructive/30 bg-destructive/10 text-destructive px-4 py-3 text-sm">{error}</div>;
+    return (
+      <div className="rounded-2xl border border-destructive/30 bg-destructive/10 text-destructive px-4 py-3 text-sm">
+        {error}
+      </div>
+    );
   }
   if (!template) {
     return (

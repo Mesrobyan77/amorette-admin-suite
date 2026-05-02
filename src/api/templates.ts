@@ -16,6 +16,7 @@ export interface Template {
   mainImage?: string;
   gallery?: string[];
   music?: string;
+  musicUrl?: string;
   musicTitle?: string;
   features?: TemplateFeature[];
   views?: number;

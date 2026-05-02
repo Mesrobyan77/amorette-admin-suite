@@ -17,7 +17,11 @@ export function Topbar({ onOpenSidebar }: { onOpenSidebar: () => void }) {
   };
 
   const initials = (user?.name || user?.email || "A")
-    .split(" ").map((s) => s[0]).join("").slice(0, 2).toUpperCase();
+    .split(" ")
+    .map((s) => s[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 
   return (
     <header className="sticky top-0 z-30 glass border-b border-border">

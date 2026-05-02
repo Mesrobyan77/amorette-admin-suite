@@ -12,7 +12,8 @@ function ComingSoonPage() {
   return (
     <div className="min-h-[60vh] flex items-center justify-center">
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
         className="w-full max-w-lg"
       >
@@ -26,7 +27,9 @@ function ComingSoonPage() {
           </p>
           <div className="mt-7 flex justify-center">
             <Link to="/admin">
-              <Button variant="outline"><ArrowLeft className="h-4 w-4" /> Back to Dashboard</Button>
+              <Button variant="outline">
+                <ArrowLeft className="h-4 w-4" /> Back to Dashboard
+              </Button>
             </Link>
           </div>
         </Card>

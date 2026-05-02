@@ -17,7 +17,11 @@ function LoginPage() {
   const { login, isAuthenticated, loading } = useAuth();
   const navigate = useNavigate();
 
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginInput>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "" },
   });
@@ -38,7 +42,8 @@ function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-10">
       <motion.div
-        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: "easeOut" }}
         className="w-full max-w-md"
       >

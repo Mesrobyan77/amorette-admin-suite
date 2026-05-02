@@ -15,14 +15,24 @@ interface ModalProps {
 
 const sizes = { sm: "max-w-sm", md: "max-w-lg", lg: "max-w-2xl" };
 
-export function Modal({ open, onClose, title, description, children, footer, size = "md" }: ModalProps) {
+export function Modal({
+  open,
+  onClose,
+  title,
+  description,
+  children,
+  footer,
+  size = "md",
+}: ModalProps) {
   return (
     <AnimatePresence>
       {open && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
           <motion.div
             className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             onClick={onClose}
           />
           <motion.div
@@ -46,7 +56,11 @@ export function Modal({ open, onClose, title, description, children, footer, siz
             {title && <h3 className="font-display text-2xl pr-8">{title}</h3>}
             {description && <p className="text-sm text-muted-foreground mt-1">{description}</p>}
             {children && <div className="mt-4">{children}</div>}
-            {footer && <div className="mt-6 flex flex-col-reverse sm:flex-row sm:justify-end gap-2">{footer}</div>}
+            {footer && (
+              <div className="mt-6 flex flex-col-reverse sm:flex-row sm:justify-end gap-2">
+                {footer}
+              </div>
+            )}
           </motion.div>
         </div>
       )}

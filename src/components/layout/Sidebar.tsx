@@ -2,32 +2,54 @@ import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  LayoutDashboard, FileImage, Plus, User, Sparkles, LogOut, ChevronDown, Menu, X, ScrollText,
+  LayoutDashboard,
+  FileImage,
+  Plus,
+  User,
+  Sparkles,
+  LogOut,
+  ChevronDown,
+  Menu,
+  X,
+  ScrollText,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { cn } from "@/utils/format";
 import toast from "react-hot-toast";
 
-interface NavLink { to: string; label: string; icon: any; }
-interface NavGroup { label: string; icon: any; items: NavLink[]; }
+interface NavLink {
+  to: string;
+  label: string;
+  icon: any;
+}
+interface NavGroup {
+  label: string;
+  icon: any;
+  items: NavLink[];
+}
 
 const groups: NavGroup[] = [
-  { label: "Landing Page", icon: FileImage, items: [
-    { to: "/admin/templates", label: "Templates", icon: FileImage },
-    { to: "/admin/templates/create", label: "Create Template", icon: Plus },
-  ]},
+  {
+    label: "Landing Page",
+    icon: FileImage,
+    items: [
+      { to: "/admin/templates", label: "Templates", icon: FileImage },
+      { to: "/admin/templates/create", label: "Create Template", icon: Plus },
+    ],
+  },
 ];
 
-const topLinks: NavLink[] = [
-  { to: "/admin", label: "Dashboard", icon: LayoutDashboard },
-];
+const topLinks: NavLink[] = [{ to: "/admin", label: "Dashboard", icon: LayoutDashboard }];
 const bottomLinks: NavLink[] = [
   { to: "/admin/audit-logs", label: "Audit Logs", icon: ScrollText },
   { to: "/admin/profile", label: "Profile", icon: User },
   { to: "/admin/coming-soon", label: "Coming Soon", icon: Sparkles },
 ];
 
-interface SidebarProps { open: boolean; onClose: () => void; }
+interface SidebarProps {
+  open: boolean;
+  onClose: () => void;
+}
 
 export function Sidebar({ open, onClose }: SidebarProps) {
   const location = useLocation();
@@ -79,7 +101,9 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           </div>
           <div className="flex flex-col leading-tight">
             <span className="font-display text-xl text-gradient-gold">Amorette</span>
-            <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Admin</span>
+            <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+              Admin
+            </span>
           </div>
         </Link>
         <button
@@ -92,7 +116,9 @@ export function Sidebar({ open, onClose }: SidebarProps) {
       </div>
 
       <nav className="flex-1 overflow-y-auto px-3 pb-4 space-y-1">
-        {topLinks.map((l) => <NavItem key={l.to} link={l} />)}
+        {topLinks.map((l) => (
+          <NavItem key={l.to} link={l} />
+        ))}
 
         {groups.map((g) => {
           const isOpen = openGroups[g.label] ?? true;
@@ -102,7 +128,9 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                 onClick={() => setOpenGroups((p) => ({ ...p, [g.label]: !isOpen }))}
                 className="w-full flex items-center justify-between px-3 py-2 text-xs uppercase tracking-[0.18em] text-muted-foreground hover:text-foreground transition"
               >
-                <span className="flex items-center gap-2"><g.icon className="h-3.5 w-3.5" /> {g.label}</span>
+                <span className="flex items-center gap-2">
+                  <g.icon className="h-3.5 w-3.5" /> {g.label}
+                </span>
                 <ChevronDown className={cn("h-3.5 w-3.5 transition", isOpen && "rotate-180")} />
               </button>
               <AnimatePresence initial={false}>
@@ -113,7 +141,9 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                     exit={{ height: 0, opacity: 0 }}
                     className="overflow-hidden space-y-1 pl-2"
                   >
-                    {g.items.map((l) => <NavItem key={l.to} link={l} />)}
+                    {g.items.map((l) => (
+                      <NavItem key={l.to} link={l} />
+                    ))}
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -122,7 +152,9 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         })}
 
         <div className="pt-2 space-y-1">
-          {bottomLinks.map((l) => <NavItem key={l.to} link={l} />)}
+          {bottomLinks.map((l) => (
+            <NavItem key={l.to} link={l} />
+          ))}
         </div>
       </nav>
 
@@ -150,12 +182,16 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           <>
             <motion.div
               className="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               onClick={onClose}
             />
             <motion.aside
               className="lg:hidden fixed left-0 top-0 bottom-0 w-72 z-50"
-              initial={{ x: "-100%" }} animate={{ x: 0 }} exit={{ x: "-100%" }}
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
               transition={{ type: "spring", stiffness: 320, damping: 32 }}
             >
               {content}

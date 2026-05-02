@@ -19,7 +19,8 @@ export function Card({ className, children, hoverable, glass, ...props }: CardPr
         "rounded-3xl p-5 sm:p-6",
         glass ? "glass" : "bg-card text-card-foreground border border-border",
         "shadow-[0_4px_20px_-8px_color-mix(in_oklab,var(--foreground)_15%,transparent)]",
-        hoverable && "cursor-pointer hover:shadow-[0_18px_40px_-18px_color-mix(in_oklab,var(--primary)_35%,transparent)]",
+        hoverable &&
+          "cursor-pointer hover:shadow-[0_18px_40px_-18px_color-mix(in_oklab,var(--primary)_35%,transparent)]",
         className,
       )}
       {...motionProps}
@@ -34,8 +35,18 @@ export function CardHeader({ children, className }: { children: ReactNode; class
   return <div className={cn("mb-4", className)}>{children}</div>;
 }
 export function CardTitle({ children, className }: { children: ReactNode; className?: string }) {
-  return <h3 className={cn("font-display text-xl sm:text-2xl text-foreground", className)}>{children}</h3>;
+  return (
+    <h3 className={cn("font-display text-xl sm:text-2xl text-foreground", className)}>
+      {children}
+    </h3>
+  );
 }
-export function CardDescription({ children, className }: { children: ReactNode; className?: string }) {
+export function CardDescription({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
   return <p className={cn("text-sm text-muted-foreground mt-1", className)}>{children}</p>;
 }

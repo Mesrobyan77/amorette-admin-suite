@@ -15,53 +15,54 @@ const initialState: AuthState = {
   initialized: false,
 };
 
-export const initializeAuth = createAsyncThunk<AdminUser | null>(
-  "auth/initialize",
-  async () => {
-    let token = getAccessToken();
-    if (!token) {
-      try {
-        const { data } = await axios.post(
-          `${API_BASE_URL}/api/auth/refresh`,
-          {},
-          { withCredentials: true }
-        );
-        if (data?.accessToken) {
-          setAccessToken(data.accessToken);
-          token = data.accessToken;
-        }
-      } catch {
-        return null;
-      }
-    }
-    if (!token) return null;
+export const initializeAuth = createAsyncThunk<AdminUser | null>("auth/initialize", async () => {
+  let token = getAccessToken();
+  if (!token) {
     try {
-      const { data } = await authApi.me();
-      return data;
+      const { data } = await axios.post(
+        `${API_BASE_URL}/api/auth/refresh`,
+        {},
+        { withCredentials: true },
+      );
+      if (data?.accessToken) {
+        setAccessToken(data.accessToken);
+        token = data.accessToken;
+      }
     } catch {
       return null;
     }
   }
-);
-
-export const loginThunk = createAsyncThunk<
-  AdminUser | null,
-  { email: string; password: string }
->("auth/login", async ({ email, password }) => {
-  const { data } = await authApi.login(email, password);
-  setAccessToken(data.accessToken);
-  if (data.user) return data.user;
-  const me = await authApi.me();
-  return me.data;
+  if (!token) return null;
+  try {
+    const { data } = await authApi.me();
+    return data;
+  } catch {
+    return null;
+  }
 });
 
+export const loginThunk = createAsyncThunk<AdminUser | null, { email: string; password: string }>(
+  "auth/login",
+  async ({ email, password }) => {
+    const { data } = await authApi.login(email, password);
+    setAccessToken(data.accessToken);
+    if (data.user) return data.user;
+    const me = await authApi.me();
+    return me.data;
+  },
+);
+
 export const logoutThunk = createAsyncThunk("auth/logout", async () => {
-  try { await authApi.logout(); } catch {}
+  try {
+    await authApi.logout();
+  } catch {}
   setAccessToken(null);
 });
 
 export const logoutAllThunk = createAsyncThunk("auth/logoutAll", async () => {
-  try { await authApi.logoutAll(); } catch {}
+  try {
+    await authApi.logoutAll();
+  } catch {}
   setAccessToken(null);
 });
 
@@ -83,7 +84,9 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(initializeAuth.pending, (state) => { state.loading = true; })
+      .addCase(initializeAuth.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(initializeAuth.fulfilled, (state, action) => {
         state.user = action.payload;
         state.loading = false;
@@ -97,8 +100,12 @@ const authSlice = createSlice({
       .addCase(loginThunk.fulfilled, (state, action) => {
         state.user = action.payload;
       })
-      .addCase(logoutThunk.fulfilled, (state) => { state.user = null; })
-      .addCase(logoutAllThunk.fulfilled, (state) => { state.user = null; })
+      .addCase(logoutThunk.fulfilled, (state) => {
+        state.user = null;
+      })
+      .addCase(logoutAllThunk.fulfilled, (state) => {
+        state.user = null;
+      })
       .addCase(refreshMeThunk.fulfilled, (state, action) => {
         state.user = action.payload;
       });

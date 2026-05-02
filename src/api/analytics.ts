@@ -34,8 +34,10 @@ export function deriveTrendsFromTemplates(
     ? ratings.reduce((s, t) => s + (t.rating || 0), 0) / ratings.length
     : null;
 
-  const start = new Date(from); start.setHours(0, 0, 0, 0);
-  const end = new Date(to);     end.setHours(0, 0, 0, 0);
+  const start = new Date(from);
+  start.setHours(0, 0, 0, 0);
+  const end = new Date(to);
+  end.setHours(0, 0, 0, 0);
   const dayCount = Math.max(1, Math.round((end.getTime() - start.getTime()) / 86_400_000) + 1);
   const base = totalViews / dayCount;
 
@@ -44,7 +46,8 @@ export function deriveTrendsFromTemplates(
     d.setDate(start.getDate() + i);
     // Smooth deterministic wave so the chart isn't flat
     const wave = 1 + 0.35 * Math.sin((i / dayCount) * Math.PI * 2);
-    const ratingWave = avgRating != null ? avgRating + 0.1 * Math.sin((i / dayCount) * Math.PI) : null;
+    const ratingWave =
+      avgRating != null ? avgRating + 0.1 * Math.sin((i / dayCount) * Math.PI) : null;
     days.push({
       date: d.toISOString().slice(0, 10),
       views: Math.max(0, Math.round(base * wave)),

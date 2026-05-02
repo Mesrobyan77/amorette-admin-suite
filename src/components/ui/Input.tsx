@@ -37,7 +37,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         ) : null}
       </div>
     );
-  }
+  },
 );
 Input.displayName = "Input";
 
@@ -71,6 +71,6 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         {error && <p className="mt-1 text-xs text-destructive">{error}</p>}
       </div>
     );
-  }
+  },
 );
 Textarea.displayName = "Textarea";

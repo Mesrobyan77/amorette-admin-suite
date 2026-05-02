@@ -11,8 +11,13 @@ export function formatDate(d?: string) {
   if (!d) return "—";
   try {
     return new Date(d).toLocaleString(undefined, {
-      year: "numeric", month: "short", day: "numeric",
-      hour: "2-digit", minute: "2-digit",
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
-  } catch { return d; }
+  } catch {
+    return d;
+  }
 }

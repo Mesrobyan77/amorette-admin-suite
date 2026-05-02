@@ -17,7 +17,11 @@ export function ThemeToggle() {
         transition={{ duration: 0.25 }}
         className="inline-flex"
       >
-        {theme === "dark" ? <Sun className="h-4 w-4 text-[var(--gold)]" /> : <Moon className="h-4 w-4" />}
+        {theme === "dark" ? (
+          <Sun className="h-4 w-4 text-[var(--gold)]" />
+        ) : (
+          <Moon className="h-4 w-4" />
+        )}
       </motion.span>
     </button>
   );

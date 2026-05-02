@@ -15,16 +15,11 @@ export interface LuxButtonProps extends HTMLMotionProps<"button"> {
 const variants: Record<Variant, string> = {
   primary:
     "bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_8px_24px_-12px_var(--primary)]",
-  secondary:
-    "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-  ghost:
-    "bg-transparent hover:bg-muted text-foreground",
-  outline:
-    "border border-border bg-transparent hover:bg-muted text-foreground",
-  destructive:
-    "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-  gold:
-    "bg-gradient-to-r from-[var(--gold)] to-[var(--primary)] text-primary-foreground hover:opacity-95 ring-luxe",
+  secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+  ghost: "bg-transparent hover:bg-muted text-foreground",
+  outline: "border border-border bg-transparent hover:bg-muted text-foreground",
+  destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+  gold: "bg-gradient-to-r from-[var(--gold)] to-[var(--primary)] text-primary-foreground hover:opacity-95 ring-luxe",
 };
 
 const sizes: Record<Size, string> = {
@@ -35,7 +30,19 @@ const sizes: Record<Size, string> = {
 };
 
 export const Button = forwardRef<HTMLButtonElement, LuxButtonProps>(
-  ({ className, variant = "primary", size = "md", loading, fullWidth, disabled, children, ...props }, ref) => {
+  (
+    {
+      className,
+      variant = "primary",
+      size = "md",
+      loading,
+      fullWidth,
+      disabled,
+      children,
+      ...props
+    },
+    ref,
+  ) => {
     return (
       <motion.button
         ref={ref}
@@ -60,6 +67,6 @@ export const Button = forwardRef<HTMLButtonElement, LuxButtonProps>(
         {children}
       </motion.button>
     );
-  }
+  },
 );
 Button.displayName = "Button";

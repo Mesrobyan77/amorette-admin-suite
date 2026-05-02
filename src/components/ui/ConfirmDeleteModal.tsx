@@ -13,7 +13,12 @@ interface ConfirmDeleteProps {
 }
 
 export function ConfirmDeleteModal({
-  open, onClose, onConfirm, itemName, title = "Delete item", description,
+  open,
+  onClose,
+  onConfirm,
+  itemName,
+  title = "Delete item",
+  description,
 }: ConfirmDeleteProps) {
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,20 +27,37 @@ export function ConfirmDeleteModal({
   const handleConfirm = async () => {
     if (!matches) return;
     setLoading(true);
-    try { await onConfirm(); onClose(); setValue(""); }
-    finally { setLoading(false); }
+    try {
+      await onConfirm();
+      onClose();
+      setValue("");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <Modal
       open={open}
-      onClose={() => { if (!loading) { onClose(); setValue(""); } }}
+      onClose={() => {
+        if (!loading) {
+          onClose();
+          setValue("");
+        }
+      }}
       title={title}
       description={description ?? `This action cannot be undone. Type "${itemName}" to confirm.`}
       footer={
         <>
-          <Button variant="ghost" onClick={onClose} disabled={loading}>Cancel</Button>
-          <Button variant="destructive" disabled={!matches} loading={loading} onClick={handleConfirm}>
+          <Button variant="ghost" onClick={onClose} disabled={loading}>
+            Cancel
+          </Button>
+          <Button
+            variant="destructive"
+            disabled={!matches}
+            loading={loading}
+            onClick={handleConfirm}
+          >
             Delete
           </Button>
         </>

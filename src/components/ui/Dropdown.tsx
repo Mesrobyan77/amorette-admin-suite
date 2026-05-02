@@ -23,7 +23,9 @@ export function Dropdown({ trigger, children, align = "end", className }: Dropdo
 
   return (
     <div ref={ref} className="relative">
-      <button onClick={() => setOpen((v) => !v)} className="outline-none">{trigger}</button>
+      <button onClick={() => setOpen((v) => !v)} className="outline-none">
+        {trigger}
+      </button>
       <AnimatePresence>
         {open && (
           <motion.div
@@ -47,8 +49,16 @@ export function Dropdown({ trigger, children, align = "end", className }: Dropdo
 }
 
 export function DropdownItem({
-  children, onClick, className, danger,
-}: { children: ReactNode; onClick?: () => void; className?: string; danger?: boolean }) {
+  children,
+  onClick,
+  className,
+  danger,
+}: {
+  children: ReactNode;
+  onClick?: () => void;
+  className?: string;
+  danger?: boolean;
+}) {
   return (
     <button
       onClick={onClick}

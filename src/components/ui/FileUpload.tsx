@@ -14,27 +14,43 @@ interface SingleFileProps {
 }
 
 export function SingleFileUpload({
-  label, accept, value, existingUrl, onChange, onRemoveExisting, kind = "image", error,
+  label,
+  accept,
+  value,
+  existingUrl,
+  onChange,
+  onRemoveExisting,
+  kind = "image",
+  error,
 }: SingleFileProps) {
   const previewUrl = value ? URL.createObjectURL(value) : existingUrl || null;
 
   return (
     <div className="w-full">
       {label && <label className="mb-1.5 block text-sm font-medium">{label}</label>}
-      <div className={cn(
-        "relative rounded-2xl border-2 border-dashed border-border bg-card/50 p-4 sm:p-6 transition hover:border-primary/40",
-        error && "border-destructive",
-      )}>
+      <div
+        className={cn(
+          "relative rounded-2xl border-2 border-dashed border-border bg-card/50 p-4 sm:p-6 transition hover:border-primary/40",
+          error && "border-destructive",
+        )}
+      >
         {previewUrl ? (
           <div className="flex items-center gap-4">
             {kind === "image" ? (
-              <img src={previewUrl} alt="preview" className="h-20 w-20 sm:h-24 sm:w-24 rounded-2xl object-cover" />
+              <img
+                src={previewUrl}
+                alt="preview"
+                className="h-20 w-20 sm:h-24 sm:w-24 rounded-2xl object-cover"
+              />
             ) : (
               <audio src={previewUrl} controls className="flex-1 max-w-full" />
             )}
             <button
               type="button"
-              onClick={() => { onChange(null); onRemoveExisting?.(); }}
+              onClick={() => {
+                onChange(null);
+                onRemoveExisting?.();
+              }}
               className="ml-auto inline-flex items-center gap-1 px-3 py-2 rounded-xl bg-destructive/10 text-destructive text-sm hover:bg-destructive/20"
             >
               <X className="h-4 w-4" /> Remove
@@ -42,7 +58,11 @@ export function SingleFileUpload({
           </div>
         ) : (
           <label className="flex flex-col items-center justify-center gap-2 cursor-pointer py-4">
-            {kind === "image" ? <ImagePlus className="h-8 w-8 text-muted-foreground" /> : <Music2 className="h-8 w-8 text-muted-foreground" />}
+            {kind === "image" ? (
+              <ImagePlus className="h-8 w-8 text-muted-foreground" />
+            ) : (
+              <Music2 className="h-8 w-8 text-muted-foreground" />
+            )}
             <span className="text-sm text-muted-foreground">Click to upload</span>
             <input
               type="file"
@@ -68,7 +88,12 @@ interface GalleryProps {
 }
 
 export function GalleryUpload({
-  files, existingUrls = [], onAdd, onRemoveFile, onRemoveExisting, max = 10,
+  files,
+  existingUrls = [],
+  onAdd,
+  onRemoveFile,
+  onRemoveExisting,
+  max = 10,
 }: GalleryProps) {
   const totalCount = files.length + existingUrls.length;
   const remaining = Math.max(0, max - totalCount);
@@ -77,12 +102,17 @@ export function GalleryUpload({
     <div className="w-full">
       <label className="mb-1.5 flex items-center justify-between text-sm font-medium">
         <span>Gallery</span>
-        <span className="text-xs text-muted-foreground">{totalCount}/{max}</span>
+        <span className="text-xs text-muted-foreground">
+          {totalCount}/{max}
+        </span>
       </label>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
         {existingUrls.map((url, i) => (
-          <div key={`ex-${i}`} className="relative aspect-square rounded-2xl overflow-hidden border border-border group">
+          <div
+            key={`ex-${i}`}
+            className="relative aspect-square rounded-2xl overflow-hidden border border-border group"
+          >
             <img src={url} alt="" className="h-full w-full object-cover" />
             {onRemoveExisting && (
               <button
@@ -98,7 +128,10 @@ export function GalleryUpload({
         {files.map((file, i) => {
           const url = URL.createObjectURL(file);
           return (
-            <div key={`f-${i}`} className="relative aspect-square rounded-2xl overflow-hidden border border-border group">
+            <div
+              key={`f-${i}`}
+              className="relative aspect-square rounded-2xl overflow-hidden border border-border group"
+            >
               <img src={url} alt="" className="h-full w-full object-cover" />
               <button
                 type="button"

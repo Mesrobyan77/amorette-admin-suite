@@ -33,7 +33,9 @@ export function Breadcrumbs() {
           {c.last ? (
             <span className="text-foreground font-medium">{c.label}</span>
           ) : (
-            <Link to={c.to as any} className="hover:text-foreground transition">{c.label}</Link>
+            <Link to={c.to as any} className="hover:text-foreground transition">
+              {c.label}
+            </Link>
           )}
         </div>
       ))}

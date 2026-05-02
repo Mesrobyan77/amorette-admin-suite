@@ -1,6 +1,13 @@
 import {
-  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  LineChart, Line,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  LineChart,
+  Line,
 } from "recharts";
 import { motion } from "framer-motion";
 import type { TrendPoint } from "@/api/analytics";
@@ -25,23 +32,46 @@ export function TrendChart({ data, metric }: Props) {
   if (metric === "rating") {
     return (
       <motion.div
-        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.4 }}
         className="h-64 sm:h-72 w-full"
       >
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data} margin={{ top: 10, right: 10, left: -16, bottom: 0 }}>
             <CartesianGrid stroke={grid} vertical={false} />
-            <XAxis dataKey="date" tickFormatter={formatTickDate} tick={{ fontSize: 11, fill: "var(--muted-foreground)" }} tickLine={false} axisLine={false} />
-            <YAxis domain={[0, 5]} tick={{ fontSize: 11, fill: "var(--muted-foreground)" }} tickLine={false} axisLine={false} />
+            <XAxis
+              dataKey="date"
+              tickFormatter={formatTickDate}
+              tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
+              tickLine={false}
+              axisLine={false}
+            />
+            <YAxis
+              domain={[0, 5]}
+              tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
+              tickLine={false}
+              axisLine={false}
+            />
             <Tooltip
               contentStyle={{
-                background: "var(--popover)", border: "1px solid var(--border)",
-                borderRadius: 16, color: "var(--popover-foreground)", fontSize: 12,
+                background: "var(--popover)",
+                border: "1px solid var(--border)",
+                borderRadius: 16,
+                color: "var(--popover-foreground)",
+                fontSize: 12,
               }}
               labelFormatter={(l) => new Date(l).toLocaleDateString()}
               formatter={(v: any) => [v, "Rating"]}
             />
-            <Line type="monotone" dataKey="rating" stroke={stroke} strokeWidth={2.5} dot={{ r: 3, fill: stroke }} activeDot={{ r: 5 }} />
+            <Line
+              type="monotone"
+              dataKey="rating"
+              stroke={stroke}
+              strokeWidth={2.5}
+              dot={{ r: 3, fill: stroke }}
+              activeDot={{ r: 5 }}
+            />
           </LineChart>
         </ResponsiveContainer>
       </motion.div>
@@ -50,7 +80,9 @@ export function TrendChart({ data, metric }: Props) {
 
   return (
     <motion.div
-      initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.4 }}
       className="h-64 sm:h-72 w-full"
     >
       <ResponsiveContainer width="100%" height="100%">
@@ -62,17 +94,36 @@ export function TrendChart({ data, metric }: Props) {
             </linearGradient>
           </defs>
           <CartesianGrid stroke={grid} vertical={false} />
-          <XAxis dataKey="date" tickFormatter={formatTickDate} tick={{ fontSize: 11, fill: "var(--muted-foreground)" }} tickLine={false} axisLine={false} />
-          <YAxis tick={{ fontSize: 11, fill: "var(--muted-foreground)" }} tickLine={false} axisLine={false} />
+          <XAxis
+            dataKey="date"
+            tickFormatter={formatTickDate}
+            tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
+            tickLine={false}
+            axisLine={false}
+          />
+          <YAxis
+            tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
+            tickLine={false}
+            axisLine={false}
+          />
           <Tooltip
             contentStyle={{
-              background: "var(--popover)", border: "1px solid var(--border)",
-              borderRadius: 16, color: "var(--popover-foreground)", fontSize: 12,
+              background: "var(--popover)",
+              border: "1px solid var(--border)",
+              borderRadius: 16,
+              color: "var(--popover-foreground)",
+              fontSize: 12,
             }}
             labelFormatter={(l) => new Date(l).toLocaleDateString()}
             formatter={(v: any) => [v, "Views"]}
           />
-          <Area type="monotone" dataKey="views" stroke={stroke} strokeWidth={2.5} fill={`url(#${fillId})`} />
+          <Area
+            type="monotone"
+            dataKey="views"
+            stroke={stroke}
+            strokeWidth={2.5}
+            fill={`url(#${fillId})`}
+          />
         </AreaChart>
       </ResponsiveContainer>
     </motion.div>

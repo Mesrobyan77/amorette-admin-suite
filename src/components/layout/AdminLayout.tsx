@@ -29,7 +29,9 @@ export function AdminLayout({ children }: { children: ReactNode }) {
       <div className="flex-1 flex flex-col min-w-0">
         <Topbar onOpenSidebar={() => setSidebarOpen(true)} />
         <main className="flex-1 px-4 sm:px-6 lg:px-8 py-5 sm:py-7">
-          <div className="mb-4"><Breadcrumbs /></div>
+          <div className="mb-4">
+            <Breadcrumbs />
+          </div>
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}

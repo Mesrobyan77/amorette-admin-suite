@@ -1,7 +1,6 @@
 import axios from "axios";
 
-export const API_BASE_URL =
-  (import.meta as any).env?.VITE_API_URL || "http://localhost:7777";
+export const API_BASE_URL = (import.meta as any).env?.VITE_API_URL || "http://localhost:7777";
 
 export const TOKEN_KEY = "amorette.accessToken";
 
@@ -76,7 +75,7 @@ api.interceptors.response.use(
         const { data } = await axios.post(
           `${API_BASE_URL}/api/auth/refresh`,
           {},
-          { withCredentials: true }
+          { withCredentials: true },
         );
         const newToken: string | undefined = data?.accessToken;
         if (!newToken) throw new Error("No accessToken in refresh response");
@@ -99,7 +98,7 @@ api.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;

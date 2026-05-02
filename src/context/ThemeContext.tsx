@@ -18,7 +18,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (typeof document === "undefined") return;
     document.documentElement.classList.toggle("dark", theme === "dark");
-    try { localStorage.setItem(THEME_KEY, theme); } catch {}
+    try {
+      localStorage.setItem(THEME_KEY, theme);
+    } catch {}
   }, [theme]);
 
   return <>{children}</>;
@@ -28,9 +30,12 @@ export function useTheme(): ThemeCtx {
   const dispatch = useAppDispatch();
   const theme = useAppSelector((s) => s.theme.theme);
 
-  return useMemo<ThemeCtx>(() => ({
-    theme,
-    setTheme: (t) => dispatch(setTheme(t)),
-    toggle: () => dispatch(toggleTheme()),
-  }), [theme, dispatch]);
+  return useMemo<ThemeCtx>(
+    () => ({
+      theme,
+      setTheme: (t) => dispatch(setTheme(t)),
+      toggle: () => dispatch(toggleTheme()),
+    }),
+    [theme, dispatch],
+  );
 }

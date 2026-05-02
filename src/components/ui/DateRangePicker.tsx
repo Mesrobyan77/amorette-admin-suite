@@ -30,7 +30,9 @@ export function rangeFromPreset(preset: Exclude<RangePreset, "custom">): DateRan
 const toInputValue = (d: Date) => d.toISOString().slice(0, 10);
 
 export function DateRangePicker({
-  value, onChange, className,
+  value,
+  onChange,
+  className,
 }: {
   value: DateRange;
   onChange: (r: DateRange) => void;
@@ -46,10 +48,15 @@ export function DateRangePicker({
           return (
             <button
               key={p.key}
-              onClick={() => { onChange(rangeFromPreset(p.key)); setOpen(false); }}
+              onClick={() => {
+                onChange(rangeFromPreset(p.key));
+                setOpen(false);
+              }}
               className={cn(
                 "px-3 h-8 rounded-xl text-xs font-medium transition",
-                active ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground",
+                active
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground",
               )}
             >
               {p.label}
@@ -60,7 +67,9 @@ export function DateRangePicker({
           onClick={() => setOpen((v) => !v)}
           className={cn(
             "px-3 h-8 rounded-xl text-xs font-medium transition inline-flex items-center gap-1.5",
-            value.preset === "custom" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground",
+            value.preset === "custom"
+              ? "bg-primary text-primary-foreground shadow-sm"
+              : "text-muted-foreground hover:text-foreground",
           )}
         >
           <Calendar className="h-3.5 w-3.5" /> Custom

@@ -21,7 +21,11 @@ function ProfilePage() {
   const [loading, setLoading] = useState(false);
 
   const initials = (user?.name || user?.email || "A")
-    .split(" ").map((s) => s[0]).join("").slice(0, 2).toUpperCase();
+    .split(" ")
+    .map((s) => s[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 
   const doLogout = async () => {
     setLoading(true);
@@ -29,7 +33,9 @@ function ProfilePage() {
       await logout();
       toast.success("Signed out");
       navigate({ to: "/login" });
-    } finally { setLoading(false); }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const doLogoutAll = async () => {
@@ -40,7 +46,10 @@ function ProfilePage() {
       navigate({ to: "/login" });
     } catch (e: any) {
       toast.error(e?.response?.data?.message || "Logout-all failed");
-    } finally { setLoading(false); setConfirmAll(false); }
+    } finally {
+      setLoading(false);
+      setConfirmAll(false);
+    }
   };
 
   return (
@@ -55,7 +64,15 @@ function ProfilePage() {
           <CardTitle>Account Info</CardTitle>
           <div className="mt-5 flex flex-col sm:flex-row sm:items-center gap-5">
             <div className="h-24 w-24 rounded-3xl bg-gradient-to-br from-[var(--gold)] to-[var(--primary)] text-primary-foreground font-display text-3xl flex items-center justify-center ring-luxe shrink-0">
-              {user?.avatarUrl ? <img src={user.avatarUrl} alt="" className="h-full w-full object-cover rounded-3xl" /> : initials}
+              {user?.avatarUrl ? (
+                <img
+                  src={user.avatarUrl}
+                  alt=""
+                  className="h-full w-full object-cover rounded-3xl"
+                />
+              ) : (
+                initials
+              )}
             </div>
             <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
               <Field icon={Mail} label="Name" value={user?.name || "—"} />
@@ -70,10 +87,16 @@ function ProfilePage() {
         </Card>
       </motion.div>
 
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.05 }}
+      >
         <Card>
           <CardTitle>Security</CardTitle>
-          <p className="text-sm text-muted-foreground mt-1">Sign out of this device, or end all active sessions.</p>
+          <p className="text-sm text-muted-foreground mt-1">
+            Sign out of this device, or end all active sessions.
+          </p>
           <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Button variant="outline" onClick={doLogout} loading={loading} fullWidth>
               <LogOut className="h-4 w-4" /> Logout this session
@@ -92,7 +115,9 @@ function ProfilePage() {
         description="This will end every active session for your account on all devices."
         footer={
           <>
-            <Button variant="ghost" onClick={() => setConfirmAll(false)} disabled={loading}>Cancel</Button>
+            <Button variant="ghost" onClick={() => setConfirmAll(false)} disabled={loading}>
+              Cancel
+            </Button>
             <Button variant="destructive" onClick={doLogoutAll} loading={loading}>
               <ShieldAlert className="h-4 w-4" /> Logout all
             </Button>
@@ -103,10 +128,22 @@ function ProfilePage() {
   );
 }
 
-function Field({ icon: Icon, label, value, children }: { icon: any; label: string; value?: string; children?: any }) {
+function Field({
+  icon: Icon,
+  label,
+  value,
+  children,
+}: {
+  icon: any;
+  label: string;
+  value?: string;
+  children?: any;
+}) {
   return (
     <div className="rounded-2xl bg-muted/50 px-4 py-3">
-      <div className="flex items-center gap-2 text-xs text-muted-foreground"><Icon className="h-3.5 w-3.5" /> {label}</div>
+      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+        <Icon className="h-3.5 w-3.5" /> {label}
+      </div>
       <div className="mt-1 text-sm font-medium">{children ?? value ?? "—"}</div>
     </div>
   );

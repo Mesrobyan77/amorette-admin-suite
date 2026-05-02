@@ -2,7 +2,16 @@ import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-r
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ChevronLeft, ChevronRight, Pencil, Trash2, Eye, Star, Calendar, Check, X, FileImage,
+  ChevronLeft,
+  ChevronRight,
+  Pencil,
+  Trash2,
+  Eye,
+  Star,
+  Calendar,
+  Check,
+  X,
+  FileImage,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { templatesApi, type Template } from "@/api/templates";
@@ -30,23 +39,35 @@ function TemplateDetailPage() {
     (async () => {
       try {
         const { data } = await templatesApi.get(id);
-        if (alive) { setTemplate(data); setGalleryIdx(0); }
+        const templateData = (data as any)?.data || data;
+        if (alive) {
+          setTemplate(templateData);
+          setGalleryIdx(0);
+        }
       } catch (e: any) {
         if (alive) setError(e?.response?.data?.message || "Failed to load template");
       }
     })();
-    return () => { alive = false; };
+    return () => {
+      alive = false;
+    };
   }, [id]);
 
   const handleDelete = async () => {
     await toast.promise(templatesApi.remove(id), {
-      loading: "Deleting…", success: "Template deleted", error: "Delete failed",
+      loading: "Deleting…",
+      success: "Template deleted",
+      error: "Delete failed",
     });
     navigate({ to: "/admin/templates" });
   };
 
   if (error) {
-    return <div className="rounded-2xl border border-destructive/30 bg-destructive/10 text-destructive px-4 py-3 text-sm">{error}</div>;
+    return (
+      <div className="rounded-2xl border border-destructive/30 bg-destructive/10 text-destructive px-4 py-3 text-sm">
+        {error}
+      </div>
+    );
   }
   if (!template) {
     return (
@@ -80,7 +101,9 @@ function TemplateDetailPage() {
         </div>
         <div className="grid grid-cols-2 sm:flex gap-2">
           <Link to="/admin/templates/edit/$id" params={{ id }}>
-            <Button variant="outline" fullWidth><Pencil className="h-4 w-4" /> Edit</Button>
+            <Button variant="outline" fullWidth>
+              <Pencil className="h-4 w-4" /> Edit
+            </Button>
           </Link>
           <Button variant="destructive" onClick={() => setConfirmOpen(true)} fullWidth>
             <Trash2 className="h-4 w-4" /> Delete
@@ -97,7 +120,9 @@ function TemplateDetailPage() {
                   key={current}
                   src={current}
                   alt={template.name}
-                  initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
                   className="absolute inset-0 h-full w-full object-cover"
                 />
               ) : (
@@ -108,10 +133,16 @@ function TemplateDetailPage() {
             </AnimatePresence>
             {allImages.length > 1 && (
               <>
-                <button onClick={prev} className="absolute left-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-black/50 text-white flex items-center justify-center backdrop-blur hover:bg-black/70 transition">
+                <button
+                  onClick={prev}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-black/50 text-white flex items-center justify-center backdrop-blur hover:bg-black/70 transition"
+                >
                   <ChevronLeft className="h-5 w-5" />
                 </button>
-                <button onClick={next} className="absolute right-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-black/50 text-white flex items-center justify-center backdrop-blur hover:bg-black/70 transition">
+                <button
+                  onClick={next}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-black/50 text-white flex items-center justify-center backdrop-blur hover:bg-black/70 transition"
+                >
                   <ChevronRight className="h-5 w-5" />
                 </button>
                 <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-black/50 text-white text-xs">
@@ -142,16 +173,20 @@ function TemplateDetailPage() {
               {formatCurrency(template.basePrice, template.currency || "֏")}
             </p>
             <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
-              <div className="flex items-center gap-2"><Eye className="h-4 w-4 text-muted-foreground" /> {template.views || 0} views</div>
-              <div className="flex items-center gap-2"><Star className="h-4 w-4 text-[var(--gold)]" /> {template.rating ?? "—"}</div>
+              <div className="flex items-center gap-2">
+                <Eye className="h-4 w-4 text-muted-foreground" /> {template.views || 0} views
+              </div>
+              <div className="flex items-center gap-2">
+                <Star className="h-4 w-4 text-[var(--gold)]" /> {template.rating ?? "—"}
+              </div>
             </div>
           </Card>
 
-          {template.music && (
+          {(template.musicUrl || template.music) && (
             <Card>
               <CardTitle>Music</CardTitle>
               {template.musicTitle && <p className="text-sm text-muted-foreground mt-1">{template.musicTitle}</p>}
-              <audio src={template.music} controls className="mt-3 w-full" />
+              <audio src={template.musicUrl || template.music} controls className="mt-3 w-full" />
             </Card>
           )}
         </div>
@@ -160,7 +195,9 @@ function TemplateDetailPage() {
       {template.description && (
         <Card>
           <CardTitle>Description</CardTitle>
-          <p className="mt-3 text-sm whitespace-pre-wrap text-foreground/90 leading-relaxed">{template.description}</p>
+          <p className="mt-3 text-sm whitespace-pre-wrap text-foreground/90 leading-relaxed">
+            {template.description}
+          </p>
         </Card>
       )}
 
@@ -169,11 +206,18 @@ function TemplateDetailPage() {
           <CardTitle>Features</CardTitle>
           <ul className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
             {template.features.map((f, i) => (
-              <li key={i} className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted/50 text-sm">
-                {f.included
-                  ? <Check className="h-4 w-4 text-[var(--primary)]" />
-                  : <X className="h-4 w-4 text-muted-foreground" />}
-                <span className={f.included ? "" : "text-muted-foreground line-through"}>{f.name}</span>
+              <li
+                key={i}
+                className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-muted/50 text-sm"
+              >
+                {f.included ? (
+                  <Check className="h-4 w-4 text-[var(--primary)]" />
+                ) : (
+                  <X className="h-4 w-4 text-muted-foreground" />
+                )}
+                <span className={f.included ? "" : "text-muted-foreground line-through"}>
+                  {f.name}
+                </span>
               </li>
             ))}
           </ul>

@@ -15,6 +15,7 @@ function buildFormData({ values, mainImage, gallery, music }: TemplateFormSubmit
   fd.append("basePrice", String(values.basePrice));
   fd.append("currency", values.currency || "֏");
   if (values.musicTitle) fd.append("musicTitle", values.musicTitle);
+  if (values.demoLink) fd.append("demoLink", values.demoLink);
   fd.append("features", JSON.stringify(values.features || []));
   if (mainImage) fd.append("mainImage", mainImage);
   gallery.forEach((f) => fd.append("gallery", f));

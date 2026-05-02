@@ -25,6 +25,8 @@ function buildEditFormData(initial: Template, data: TemplateFormSubmit) {
     fd.append("currency", values.currency || "֏");
   if ((values.musicTitle || "") !== (initial.musicTitle || ""))
     fd.append("musicTitle", values.musicTitle || "");
+  if ((values.demoLink || "") !== (initial.demoLink || ""))
+    fd.append("demoLink", values.demoLink || "");
 
   const featuresChanged =
     JSON.stringify(values.features || []) !== JSON.stringify(initial.features || []);

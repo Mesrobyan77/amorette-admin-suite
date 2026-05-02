@@ -125,7 +125,7 @@ function TemplatesListPage() {
   const totalItems = pagination?.total || 0;
 
   const allOnPageSelected =
-    templates && templates.length > 0 && templates.every((t) => selected.has((t.id || t._id) as string));
+    !!templates && templates.length > 0 && templates.every((t) => selected.has((t.id || t._id) as string));
   
   const togglePageSelection = () => {
     const next = new Set(selected);

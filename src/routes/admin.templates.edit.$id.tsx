@@ -15,6 +15,7 @@ function buildEditFormData(initial: Template, data: TemplateFormSubmit) {
   const fd = new FormData();
   // Always send text fields (changes are cheap to detect server-side)
   if (values.name !== initial.name) fd.append("name", values.name);
+  if ((values.key || "") !== (initial.key || "")) fd.append("key", values.key || "");
   if ((values.category || "") !== (initial.category || ""))
     fd.append("category", values.category || "");
   if ((values.description || "") !== (initial.description || ""))
@@ -27,6 +28,12 @@ function buildEditFormData(initial: Template, data: TemplateFormSubmit) {
     fd.append("musicTitle", values.musicTitle || "");
   if ((values.demoLink || "") !== (initial.demoLink || ""))
     fd.append("demoLink", values.demoLink || "");
+  if ((values.isActive || false) !== (initial.isActive || false))
+    fd.append("isActive", String(values.isActive || false));
+  if ((values.rating || 5) !== (initial.rating || 5))
+    fd.append("rating", String(values.rating || 5));
+  if (JSON.stringify(values.defaultData || {}) !== JSON.stringify(initial.defaultData || {}))
+    fd.append("defaultData", JSON.stringify(values.defaultData || {}));
 
   const featuresChanged =
     JSON.stringify(values.features || []) !== JSON.stringify(initial.features || []);

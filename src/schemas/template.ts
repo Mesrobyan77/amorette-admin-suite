@@ -7,12 +7,16 @@ export const featureSchema = z.object({
 
 export const templateSchema = z.object({
   name: z.string().trim().min(2, "Min 2 characters").max(120),
+  key: z.string().trim().min(1, "Required").max(120),
   category: z.string().trim().max(80).optional().or(z.literal("")),
   description: z.string().trim().max(2000).optional().or(z.literal("")),
   basePrice: z.coerce.number({ invalid_type_error: "Required" }).positive("Must be positive"),
   currency: z.string().trim().min(1).max(8),
   musicTitle: z.string().trim().max(120).optional().or(z.literal("")),
   demoLink: z.string().trim().url("Invalid URL").optional().or(z.literal("")),
+  isActive: z.boolean().optional(),
+  rating: z.coerce.number().min(0).max(5).optional(),
+  defaultData: z.any().optional(),
   features: z.array(featureSchema).max(50),
 });
 

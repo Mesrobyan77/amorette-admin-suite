@@ -10,12 +10,16 @@ export const Route = createFileRoute("/admin/templates/create")({
 function buildFormData({ values, mainImage, gallery, music }: TemplateFormSubmit) {
   const fd = new FormData();
   fd.append("name", values.name);
+  fd.append("key", values.key || "");
   if (values.category) fd.append("category", values.category);
   if (values.description) fd.append("description", values.description);
   fd.append("basePrice", String(values.basePrice));
   fd.append("currency", values.currency || "֏");
   if (values.musicTitle) fd.append("musicTitle", values.musicTitle);
   if (values.demoLink) fd.append("demoLink", values.demoLink);
+  if (values.isActive !== undefined) fd.append("isActive", String(values.isActive));
+  if (values.rating !== undefined) fd.append("rating", String(values.rating));
+  if (values.defaultData) fd.append("defaultData", JSON.stringify(values.defaultData));
   fd.append("features", JSON.stringify(values.features || []));
   if (mainImage) fd.append("mainImage", mainImage);
   gallery.forEach((f) => fd.append("gallery", f));

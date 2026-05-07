@@ -50,19 +50,27 @@ export function TemplateForm({ initial, submitLabel = "Save", onSubmit }: Props)
     handleSubmit,
     control,
     formState: { errors },
+    watch,
+    setValue,
   } = useForm<TemplateInput>({
     resolver: zodResolver(templateSchema),
     defaultValues: {
       name: initial?.name || "",
+      key: initial?.key || "",
       category: initial?.category || "",
       description: initial?.description || "",
       basePrice: initial?.basePrice ?? (undefined as any),
       currency: initial?.currency || "֏",
       musicTitle: initial?.musicTitle || "",
       demoLink: initial?.demoLink || "",
+      isActive: initial?.isActive ?? true,
+      rating: initial?.rating ?? 5,
+      defaultData: initial?.defaultData ? JSON.stringify(initial.defaultData, null, 2) : "{}",
       features: defaultFeatures,
     },
   });
+
+  const defaultDataValue = watch("defaultData");
 
   const { fields } = useFieldArray({ control, name: "features" });
 
@@ -77,10 +85,23 @@ export function TemplateForm({ initial, submitLabel = "Save", onSubmit }: Props)
       alert("Main image is required");
       return;
     }
+    
     setSubmitting(true);
     try {
+      // Parse defaultData if it's a string
+      let parsedValues = { ...values };
+      if (typeof parsedValues.defaultData === "string") {
+        try {
+          parsedValues.defaultData = parsedValues.defaultData.trim() ? JSON.parse(parsedValues.defaultData as any) : {};
+        } catch (e) {
+          alert("Invalid JSON in Default Data field");
+          setSubmitting(false);
+          return;
+        }
+      }
+      
       await onSubmit({
-        values,
+        values: parsedValues,
         mainImage,
         gallery,
         music,
@@ -104,6 +125,12 @@ export function TemplateForm({ initial, submitLabel = "Save", onSubmit }: Props)
               placeholder="Royal Ivory"
               error={errors.name?.message}
               {...register("name")}
+            />
+            <Input
+              label="Technical Key *"
+              placeholder="royal-ivory"
+              error={errors.key?.message}
+              {...register("key")}
             />
             <div className="w-full">
               <label className="mb-1.5 block text-sm font-medium text-foreground">Category</label>
@@ -146,6 +173,40 @@ export function TemplateForm({ initial, submitLabel = "Save", onSubmit }: Props)
               error={errors.demoLink?.message}
               {...register("demoLink")}
             />
+            <Input
+              label="Rating"
+              type="number"
+              step="0.1"
+              min="0"
+              max="5"
+              placeholder="5"
+              error={errors.rating?.message}
+              {...register("rating")}
+            />
+            <label className="flex items-center gap-2 cursor-pointer h-11 px-4 rounded-2xl border border-border hover:bg-muted/30 transition-colors">
+              <input
+                type="checkbox"
+                {...register("isActive")}
+                className="rounded border-gray-300"
+              />
+              <span className="text-sm font-medium">Active</span>
+            </label>
+          </div>
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-foreground">Default Data (JSON)</label>
+            <textarea
+              {...register("defaultData")}
+              placeholder={JSON.stringify({ example: "value" }, null, 2)}
+              className={cn(
+                "w-full p-3 rounded-2xl bg-card text-foreground border border-border font-mono text-xs",
+                "focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent",
+                "min-h-32 resize-vertical",
+                errors.defaultData && "border-destructive focus:ring-destructive/40",
+              )}
+            />
+            {errors.defaultData && (
+              <p className="mt-1 text-xs text-destructive">{String(errors.defaultData.message)}</p>
+            )}
           </div>
           <Textarea
             label="Description"

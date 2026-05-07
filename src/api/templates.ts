@@ -9,6 +9,8 @@ export interface Template {
   id: string;
   _id?: string;
   name: string;
+  key?: string;
+  slug?: string;
   category?: string;
   description?: string;
   basePrice: number;
@@ -22,6 +24,8 @@ export interface Template {
   demoLink?: string;
   views?: number;
   rating?: number;
+  isActive?: boolean;
+  defaultData?: Record<string, any>;
   createdAt?: string;
   updatedAt?: string;
 }
